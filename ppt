@@ -1,0 +1,16 @@
+image.png c'est la banner, app-icon.svg c'est le logo de Qxchat, analyse les images, change la DA du site trop IA. fait un vrai site joli
+
+tout est à la racine /home/kisakay/Documents/Code/GitHub/site
+
+Revois la DA, elle est désastruse, trop de texte, peut d'exemple, les textes trop gros, pas assez explicatif c quoi QxChat
+
+Intègre mes images / vidéos dans public assets pour faire un showcase sur la landing page, et ajoute une section download :
+
+repo
+
+https://github.com/lqxp/app
+
+c'est dans les release,  boutton téléchargement linux, windows, android, macOS avec un jeu niveau API pour trouver les asssets du repo
+
+Revois le design complet. Le rendu est laid, trop IA, trop GPT. Fait un vrai landing page sympa, style un peu Symphony. Faire des vraies pages par onglet dans la topbar, faire une vrai topbar. Meilleur choix des couleurs pour la DA. le css est affreux, faire du rectiligne ou un meulleurs style: voici des couleurs de ma DA:
+#1c71d8 majeur #4898f7 mineur #f0e0d9 accent 1 #4e658d accent 2
