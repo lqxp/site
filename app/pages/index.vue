@@ -166,7 +166,7 @@ const useCases = [
     </div>
   </section>
 
-  <section class="cta-band">
+  <!-- <section class="cta-band">
     <div class="container cta-band__inner">
       <div>
         <h2>Ready to host your own server?</h2>
@@ -174,7 +174,7 @@ const useCases = [
       </div>
       <NuxtLink to="/download" class="btn btn--primary">Download</NuxtLink>
     </div>
-  </section>
+  </section> -->
 </template>
 
 <style scoped>
