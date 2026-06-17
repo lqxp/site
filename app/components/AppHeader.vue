@@ -16,7 +16,7 @@ function closeMenu() {
 
       <nav class="site-nav" :class="{ 'is-open': menuOpen }" aria-label="Navigation principale">
         <NuxtLink to="/" exact-active-class="is-active" @click="closeMenu">Accueil</NuxtLink>
-        <NuxtLink to="/fonctionnalites" active-class="is-active" @click="closeMenu">Fonctionnalités</NuxtLink>
+        <NuxtLink to="/features" active-class="is-active" @click="closeMenu">Fonctionnalités</NuxtLink>
         <NuxtLink to="/telechargement" active-class="is-active" @click="closeMenu">Téléchargement</NuxtLink>
         <NuxtLink to="/telechargement" class="btn btn--primary btn--sm site-nav__cta" @click="closeMenu">
           Télécharger
