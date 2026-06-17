@@ -1,59 +1,59 @@
 <script setup lang="ts">
 useSeoMeta({
-  title: 'Fonctionnalités — QxChat',
-  description: 'Rooms privées, chiffrement, multi-plateforme et auto-hébergement : ce que QxChat fait, concrètement.',
+  title: 'Features — QxChat',
+  description: 'Private rooms, encryption, multi-platform and self-hosting: what QxChat actually does.',
   ogType: 'website'
 })
 
 const showcase = [
   {
     src: '/assets/texting_showcase.png',
-    title: 'Salons texte',
-    text: 'Des conversations organisées par room, avec une hiérarchie claire.'
+    title: 'Text rooms',
+    text: 'Conversations organized by room, with a clear hierarchy.'
   },
   {
     src: '/assets/stream_showcase.png',
-    title: 'Appels et stream',
-    text: 'Voix, vidéo et partage d’écran, dans la même fenêtre que le texte.'
+    title: 'Calls & streaming',
+    text: 'Voice, video and screen sharing, in the same window as text.'
   },
   {
     src: '/assets/writing_showcase.png',
-    title: 'Écriture rapide',
-    text: 'Composer, répondre, suivre un fil sans perdre le contexte.'
+    title: 'Quick writing',
+    text: 'Compose, reply, follow a thread without losing context.'
   }
 ]
 
 const features = [
   {
     tag: 'ROOMS',
-    title: 'Rooms privées',
-    text: 'Des espaces accessibles uniquement sur invitation, avec leurs propres permissions.'
+    title: 'Private rooms',
+    text: 'Invite-only spaces, each with its own permissions.'
   },
   {
     tag: 'CRYPTO',
-    title: 'Chiffrement par room',
-    text: 'Chaque room génère sa clé ; les messages sont protégés côté client.'
+    title: 'Per-room encryption',
+    text: 'Each room generates its own key; messages are protected client-side.'
   },
   {
     tag: 'OS × 4',
-    title: 'Multi-plateforme',
-    text: 'Web, desktop (Tauri) et mobile, construits depuis la même base de code.'
+    title: 'Multi-platform',
+    text: 'Web, desktop (Tauri) and mobile, built from the same codebase.'
   },
   {
     tag: 'SELF',
-    title: 'Auto-hébergement',
-    text: 'API, WebSocket et TURN configurables selon ton infra — rien d’imposé.'
+    title: 'Self-hosting',
+    text: 'API, WebSocket and TURN configurable to your infra — nothing forced.'
   }
 ]
 </script>
 
 <template>
   <section class="page-hero container">
-    <p class="eyebrow">Fonctionnalités</p>
-    <h1>Comment ça marche, concrètement.</h1>
+    <p class="eyebrow">Features</p>
+    <h1>How it actually works.</h1>
     <p class="lead">
-      Trois écrans suffisent à montrer l’essentiel : des salons clairs, des appels qui marchent, une interface
-      qui ne traîne pas.
+      Three screens are enough to show the essentials: clear rooms, calls that work, an interface
+      that doesn't drag.
     </p>
   </section>
 
@@ -62,17 +62,10 @@ const features = [
       <div class="window-chrome__bar">
         <span></span><span></span><span></span>
       </div>
-      <video
-        class="window-chrome__media"
-        src="/assets/mobile_demo.mp4"
-        autoplay
-        muted
-        loop
-        playsinline
-        controls
-      ></video>
+      <video class="window-chrome__media" src="/assets/mobile_demo.mp4" autoplay muted loop playsinline
+        controls></video>
     </div>
-    <p class="showcase-video__caption">Démo mobile — la même base que sur desktop.</p>
+    <p class="showcase-video__caption">Mobile demo — same base as desktop.</p>
   </section>
 
   <section class="showcase-grid container">
@@ -96,7 +89,7 @@ const features = [
   </section>
 
   <section class="stack-strip">
-    <p class="container">Construit avec <strong>lqxp</strong> · Vue · Tauri · WebRTC · Rust</p>
+    <p class="container">Built with <strong>lqxp</strong> · Vue · Tauri · WebRTC · Rust</p>
   </section>
 </template>
 
@@ -113,12 +106,23 @@ const features = [
 
 .showcase-video {
   padding-bottom: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Shrink the demo video so it no longer dominates the page */
+.showcase-video .window-chrome {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
 }
 
 .showcase-video__caption {
   margin-top: 12px;
   color: var(--slate);
   font-size: 0.9rem;
+  text-align: center;
 }
 
 .showcase-grid {
@@ -218,6 +222,10 @@ const features = [
   .feature-row {
     grid-template-columns: 1fr;
     gap: 8px;
+  }
+
+  .showcase-video .window-chrome {
+    max-width: 320px;
   }
 }
 </style>
