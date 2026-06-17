@@ -20,6 +20,11 @@ const showcase = [
     src: '/assets/writing_showcase.png',
     title: 'Quick writing',
     text: 'Compose, reply, follow a thread without losing context.'
+  },
+  {
+    src: "/assets/overview_pc.png",
+    title: "Desktop Experience",
+    text: "Available in lightweight desktop client for Windows, macOS and Linux"
   }
 ]
 
