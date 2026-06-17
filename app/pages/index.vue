@@ -1,41 +1,41 @@
 <script setup lang="ts">
 useSeoMeta({
-  title: 'QxChat — Messagerie privée et auto-hébergée',
+  title: 'QxChat — Private, self-hosted messaging',
   description:
-    'QxChat est une messagerie privée avec salons, appels vocaux/vidéo, profils et chiffrement de rooms, pensée pour être auto-hébergée.',
+    'QxChat is a private messenger with rooms, voice/video calls, profiles, and per-room encryption, built to be self-hosted.',
   ogTitle: 'QxChat',
-  ogDescription: 'Une messagerie privée, claire et multi-plateformes construite sur lqxp.',
+  ogDescription: 'A clear, private, cross-platform messenger built on lqxp.',
   ogType: 'website',
   twitterCard: 'summary_large_image'
 })
 
 const valueProps = [
-  { title: 'Auto-hébergé', text: 'API, WebSocket et TURN tournent sur ton infra, pas sur un cloud fermé.' },
-  { title: 'Chiffré par room', text: 'Chaque room génère sa propre clé, vérifiée côté client.' },
-  { title: 'Multi-plateforme', text: 'Web, desktop (Tauri) et mobile partagent la même base de code.' },
-  { title: 'Basé sur lqxp', text: 'Construit sur une fondation Vue ouverte, pas un framework propriétaire.' }
+  { title: 'Self-hosted', text: 'API, WebSocket, and TURN run on your own infrastructure, not a closed cloud.' },
+  { title: 'Encrypted per room', text: 'Each room generates its own key, verified client-side.' },
+  { title: 'Cross-platform', text: 'Web, desktop (Tauri), and mobile share the same codebase.' },
+  { title: 'Built on lqxp', text: 'Built on an open Vue foundation, not a proprietary framework.' }
 ]
 
 const useCases = [
-  'Monter un serveur privé pour une équipe ou une communauté',
-  'Discuter dans des salons texte avec un historique local',
-  'Lancer un appel vocal ou vidéo depuis n’importe quelle room',
-  'Héberger toute l’infrastructure toi-même, sans plateforme fermée'
+  'Set up a private server for a team or community',
+  'Chat in text rooms with locally stored history',
+  'Start a voice or video call from any room',
+  'Host the entire infrastructure yourself, with no closed platform'
 ]
 </script>
 
 <template>
   <section class="hero container">
     <div class="hero__copy">
-      <p class="eyebrow">Messagerie privée · auto-hébergée</p>
-      <h1>Ton serveur, tes salons, tes règles.</h1>
+      <p class="eyebrow">Private messaging · self-hosted</p>
+      <h1>Your server, your rooms, your rules.</h1>
       <p class="lead">
-        QxChat rassemble des rooms texte, des appels et des profils dans une appli que tu héberges toi-même —
-        sur ton serveur, avec tes clés.
+        QxChat brings together text rooms, calls, and profiles in an app you host yourself —
+        on your own server, with your own keys.
       </p>
       <div class="hero__actions">
-        <NuxtLink to="/telechargement" class="btn btn--primary">Télécharger QxChat</NuxtLink>
-        <NuxtLink to="/fonctionnalites" class="btn btn--secondary">Voir les fonctionnalités</NuxtLink>
+        <NuxtLink to="/download" class="btn btn--primary">Download QxChat</NuxtLink>
+        <NuxtLink to="/features" class="btn btn--secondary">See the features</NuxtLink>
       </div>
     </div>
 
@@ -44,39 +44,101 @@ const useCases = [
         <div class="window-chrome__bar">
           <span></span><span></span><span></span>
         </div>
-        <div class="mock-window__body">
-          <div class="mock-rail">
-            <div class="mock-rail__dot mock-rail__dot--active"></div>
-            <div class="mock-rail__dot"></div>
-            <div class="mock-rail__dot"></div>
+
+        <div class="mock-app">
+          <!-- conversation list -->
+          <div class="mock-convos">
+            <div class="mock-convos__search">
+              <span class="mock-icon mock-icon--search"></span>
+              <span>Search</span>
+            </div>
+
+            <div class="mock-convo mock-convo--active">
+              <span class="mock-avatar mock-avatar--photo"></span>
+              <div class="mock-convo__meta">
+                <strong>8e7b9ec9…0e6b9</strong>
+                <p>hello</p>
+              </div>
+              <span class="mock-convo__time">8:07 PM</span>
+            </div>
+
+            <div class="mock-convo">
+              <span class="mock-avatar mock-avatar--olive">12</span>
+              <div class="mock-convo__meta">
+                <strong>12cb4481…2fae375</strong>
+                <p>💚</p>
+              </div>
+              <span class="mock-convo__time">2:22 PM</span>
+            </div>
+
+            <div class="mock-convo">
+              <span class="mock-avatar mock-avatar--violet">AA</span>
+              <div class="mock-convo__meta">
+                <strong>aa94bf78…009f1d3e</strong>
+                <p>No messages yet</p>
+              </div>
+            </div>
           </div>
-          <div class="mock-channels">
-            <span class="mock-channels__title">QxChat — équipe</span>
-            <p># général</p>
-            <p class="is-active"># dev</p>
-            <p># vocal</p>
-            <p># annonces</p>
-          </div>
+
+          <!-- active thread -->
           <div class="mock-thread">
-            <div class="mock-msg">
-              <span class="mock-msg__avatar"></span>
+            <div class="mock-thread__header">
+              <span class="mock-avatar mock-avatar--photo"></span>
               <div>
-                <strong>léa</strong>
-                <p>le build tient sur Tauri sans souci</p>
+                <strong>8e7b9ec9…0e6b9</strong>
+                <p>Room conversation · E2EE ready</p>
+              </div>
+              <div class="mock-thread__icons">
+                <span class="mock-icon"></span>
+                <span class="mock-icon"></span>
               </div>
             </div>
-            <div class="mock-msg">
-              <span class="mock-msg__avatar"></span>
-              <div>
-                <strong>noa</strong>
-                <p>vocal dans 5 min ?</p>
+
+            <div class="mock-thread__day">Jun 8</div>
+
+            <div class="mock-thread__messages">
+              <div class="mock-msg">
+                <span class="mock-avatar mock-avatar--photo"></span>
+                <div class="mock-msg__body">
+                  <strong>2h0 <time>02:32 AM</time></strong>
+                  <p>hello</p>
+                </div>
+              </div>
+
+              <div class="mock-msg">
+                <span class="mock-avatar mock-avatar--pink">2H</span>
+                <div class="mock-msg__body">
+                  <strong>2h01 <time>02:33 AM</time></strong>
+                  <p>heyy</p>
+                  <div class="mock-reactions">
+                    <span>❤ 1</span>
+                    <span>🔵 1</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mock-msg mock-msg--deleted">
+                <span class="mock-avatar mock-avatar--pink">2H</span>
+                <div class="mock-msg__body">
+                  <strong>2h01 <time>02:33 AM</time></strong>
+                  <p class="mock-msg__deleted">Message deleted</p>
+                  <p>eeee <span class="mock-msg__edited">(edited)</span></p>
+                  <div class="mock-reactions"><span>❤ 1</span></div>
+                </div>
               </div>
             </div>
-            <div class="mock-msg">
-              <span class="mock-msg__avatar"></span>
+          </div>
+
+          <!-- presence panel -->
+          <div class="mock-presence">
+            <p class="mock-presence__label">Presence</p>
+            <p class="mock-presence__count">1 online</p>
+            <p class="mock-presence__group">Online — 1</p>
+            <div class="mock-presence__user">
+              <span class="mock-avatar mock-avatar--pink">2H</span>
               <div>
-                <strong>léa</strong>
-                <p>yep, je lance la room</p>
+                <strong>2h0 <span class="mock-tag">Web</span></strong>
+                <p><span class="mock-dot"></span>Do not disturb</p>
               </div>
             </div>
           </div>
@@ -94,15 +156,15 @@ const useCases = [
 
   <section class="definition container">
     <div class="definition__text">
-      <h2>QxChat, c’est quoi exactement ?</h2>
+      <h2>What exactly is QxChat?</h2>
       <p>
-        C’est un outil pour les équipes et les communautés qui veulent un espace de discussion sans dépendre
-        d’une plateforme centralisée : des salons organisés par room, de la voix, de la vidéo, et un historique
-        qui reste chez toi.
+        It's a tool for teams and communities who want a chat space without depending on a
+        centralized platform: rooms organized by topic, voice, video, and a history that stays
+        on your own server.
       </p>
     </div>
     <div class="definition__panel">
-      <p class="definition__panel-title">Avec QxChat, tu peux :</p>
+      <p class="definition__panel-title">With QxChat, you can:</p>
       <ul>
         <li v-for="item in useCases" :key="item">{{ item }}</li>
       </ul>
@@ -112,10 +174,10 @@ const useCases = [
   <section class="cta-band">
     <div class="container cta-band__inner">
       <div>
-        <h2>Prêt à héberger ton propre serveur ?</h2>
-        <p class="cta-band__sub">Builds Windows, Linux, macOS et Android disponibles.</p>
+        <h2>Ready to host your own server?</h2>
+        <p class="cta-band__sub">Builds available for Windows, Linux, macOS, and Android.</p>
       </div>
-      <NuxtLink to="/telechargement" class="btn btn--primary">Télécharger</NuxtLink>
+      <NuxtLink to="/download" class="btn btn--primary">Download</NuxtLink>
     </div>
   </section>
 </template>
@@ -143,63 +205,177 @@ const useCases = [
   flex-wrap: wrap;
 }
 
-.mock-window__body {
+/* ---- mock app: dark, matches the real QxChat UI ---- */
+.window-chrome {
+  --mock-bg: #15171c;
+  --mock-panel: #1b1e25;
+  --mock-panel-alt: #1f222a;
+  --mock-line: rgba(255, 255, 255, 0.08);
+  --mock-text: #e9eaed;
+  --mock-muted: #9aa0ab;
+  --mock-accent: #5b8cff;
+  --mock-pink: #e1527c;
+  --mock-olive: #8a9a3c;
+  --mock-violet: #6a5acd;
+  background: var(--mock-bg);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: 0 30px 60px rgba(10, 12, 16, 0.35);
+}
+
+.mock-app {
   display: grid;
-  grid-template-columns: 56px 140px 1fr;
+  grid-template-columns: 168px 1fr 140px;
   min-height: 320px;
-}
-
-.mock-rail {
-  background: var(--ink);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-  padding-top: 18px;
-}
-
-.mock-rail__dot {
-  width: 32px;
-  height: 32px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.12);
-}
-
-.mock-rail__dot--active {
-  background: var(--blue-700);
-}
-
-.mock-channels {
-  border-right: 1px solid var(--line);
-  padding: 16px 12px;
-  font-family: var(--font-mono);
-  font-size: 0.82rem;
-  color: var(--slate);
-}
-
-.mock-channels__title {
-  display: block;
   font-family: var(--font-body);
-  font-weight: 600;
-  color: var(--ink);
-  font-size: 0.85rem;
-  margin-bottom: 12px;
+  color: var(--mock-text);
 }
 
-.mock-channels p {
-  margin: 8px 0;
+.mock-icon {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  background: var(--mock-muted);
+  opacity: 0.6;
+  display: inline-block;
 }
 
-.mock-channels p.is-active {
-  color: var(--blue-700);
-  font-weight: 600;
-}
-
-.mock-thread {
-  padding: 18px;
+/* conversation list */
+.mock-convos {
+  background: var(--mock-panel);
+  border-right: 1px solid var(--mock-line);
+  padding: 12px 10px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 4px;
+}
+
+.mock-convos__search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--mock-panel-alt);
+  border-radius: 7px;
+  padding: 6px 8px;
+  font-size: 0.72rem;
+  color: var(--mock-muted);
+  margin-bottom: 8px;
+}
+
+.mock-convo {
+  display: grid;
+  grid-template-columns: 26px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 6px;
+  border-radius: 8px;
+}
+
+.mock-convo--active {
+  background: var(--mock-panel-alt);
+}
+
+.mock-convo__meta strong {
+  display: block;
+  font-size: 0.68rem;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--mock-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mock-convo__meta p {
+  font-size: 0.66rem;
+  color: var(--mock-muted);
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mock-convo__time {
+  font-size: 0.6rem;
+  color: var(--mock-muted);
+}
+
+/* avatars */
+.mock-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.mock-avatar--photo {
+  background: linear-gradient(160deg, #3a3f4a, #20222a);
+}
+
+.mock-avatar--pink {
+  background: var(--mock-pink);
+}
+
+.mock-avatar--olive {
+  background: var(--mock-olive);
+}
+
+.mock-avatar--violet {
+  background: var(--mock-violet);
+}
+
+/* thread */
+.mock-thread {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.mock-thread__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--mock-line);
+}
+
+.mock-thread__header strong {
+  display: block;
+  font-size: 0.74rem;
+  font-family: var(--font-mono);
+}
+
+.mock-thread__header p {
+  font-size: 0.64rem;
+  color: var(--mock-muted);
+  margin-top: 1px;
+}
+
+.mock-thread__icons {
+  margin-left: auto;
+  display: flex;
+  gap: 10px;
+}
+
+.mock-thread__day {
+  text-align: center;
+  font-size: 0.6rem;
+  color: var(--mock-muted);
+  padding: 10px 0 4px;
+}
+
+.mock-thread__messages {
+  padding: 6px 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1;
 }
 
 .mock-msg {
@@ -207,23 +383,114 @@ const useCases = [
   gap: 10px;
 }
 
-.mock-msg__avatar {
-  width: 30px;
-  height: 30px;
+.mock-msg__body strong {
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.mock-msg__body time {
+  font-size: 0.6rem;
+  color: var(--mock-muted);
+  font-weight: 400;
+  margin-left: 6px;
+}
+
+.mock-msg__body p {
+  font-size: 0.74rem;
+  color: var(--mock-text);
+  margin-top: 2px;
+}
+
+.mock-msg__deleted {
+  color: var(--mock-muted);
+  font-style: italic;
+}
+
+.mock-msg__edited {
+  color: var(--mock-muted);
+  font-size: 0.62rem;
+  font-style: italic;
+}
+
+.mock-reactions {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.mock-reactions span {
+  background: var(--mock-panel-alt);
+  border-radius: 10px;
+  padding: 2px 7px;
+  font-size: 0.62rem;
+}
+
+/* presence panel */
+.mock-presence {
+  background: var(--mock-panel);
+  border-left: 1px solid var(--mock-line);
+  padding: 14px 12px;
+}
+
+.mock-presence__label {
+  font-size: 0.6rem;
+  letter-spacing: 0.04em;
+  color: var(--mock-muted);
+  text-transform: uppercase;
+}
+
+.mock-presence__count {
+  font-size: 0.72rem;
+  font-weight: 600;
+  margin-top: 2px;
+  margin-bottom: 14px;
+}
+
+.mock-presence__group {
+  font-size: 0.6rem;
+  letter-spacing: 0.04em;
+  color: var(--mock-muted);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.mock-presence__user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mock-presence__user strong {
+  font-size: 0.68rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.mock-presence__user p {
+  font-size: 0.62rem;
+  color: var(--mock-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 1px;
+}
+
+.mock-tag {
+  background: var(--mock-panel-alt);
+  border-radius: 5px;
+  padding: 0 4px;
+  font-size: 0.56rem;
+  font-weight: 500;
+  color: var(--mock-muted);
+}
+
+.mock-dot {
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: var(--cream);
-  flex-shrink: 0;
-}
-
-.mock-msg strong {
-  display: block;
-  font-size: 0.82rem;
-  margin-bottom: 2px;
-}
-
-.mock-msg p {
-  font-size: 0.86rem;
-  color: var(--slate);
+  background: #e1527c;
+  display: inline-block;
 }
 
 .value-row {
@@ -344,6 +611,14 @@ const useCases = [
     border-left: none;
     padding-left: 0;
   }
+
+  .mock-app {
+    grid-template-columns: 140px 1fr;
+  }
+
+  .mock-presence {
+    display: none;
+  }
 }
 
 @media (max-width: 680px) {
@@ -362,11 +637,11 @@ const useCases = [
     padding-top: 0;
   }
 
-  .mock-window__body {
-    grid-template-columns: 44px 1fr;
+  .mock-app {
+    grid-template-columns: 1fr;
   }
 
-  .mock-channels {
+  .mock-convos {
     display: none;
   }
 }
