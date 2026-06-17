@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   ssr: true,
 
   app: {
-    baseURL: process.env.NUXT_APP_BASE_URL || "/app/",
+    baseURL: process.env.NUXT_APP_BASE_URL || "/",
     head: {
       htmlAttrs: { lang: "fr" },
       meta: [
