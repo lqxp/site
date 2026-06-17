@@ -13,7 +13,7 @@ const year = new Date().getFullYear()
       <nav class="site-footer__links" aria-label="Liens du pied de page">
         <NuxtLink to="/">Accueil</NuxtLink>
         <NuxtLink to="/features">Fonctionnalités</NuxtLink>
-        <NuxtLink to="/telechargement">Téléchargement</NuxtLink>
+        <NuxtLink to="/download">Téléchargement</NuxtLink>
         <a href="https://github.com/lqxp/app" target="_blank" rel="noreferrer">Code source</a>
       </nav>
     </div>

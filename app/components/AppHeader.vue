@@ -17,21 +17,16 @@ function closeMenu() {
       <nav class="site-nav" :class="{ 'is-open': menuOpen }" aria-label="Navigation principale">
         <NuxtLink to="/" exact-active-class="is-active" @click="closeMenu">Accueil</NuxtLink>
         <NuxtLink to="/features" active-class="is-active" @click="closeMenu">Fonctionnalités</NuxtLink>
-        <NuxtLink to="/telechargement" active-class="is-active" @click="closeMenu">Téléchargement</NuxtLink>
-        <NuxtLink to="/telechargement" class="btn btn--primary btn--sm site-nav__cta" @click="closeMenu">
+        <NuxtLink to="/download" active-class="is-active" @click="closeMenu">Téléchargement</NuxtLink>
+        <NuxtLink to="/download" class="btn btn--primary btn--sm site-nav__cta" @click="closeMenu">
           Télécharger
         </NuxtLink>
       </nav>
 
-      <NuxtLink to="/telechargement" class="btn btn--primary btn--sm site-header__cta">Télécharger</NuxtLink>
+      <NuxtLink to="/download " class="btn btn--primary btn--sm site-header__cta">Télécharger</NuxtLink>
 
-      <button
-        class="nav-toggle"
-        type="button"
-        :aria-expanded="menuOpen"
-        aria-label="Ouvrir la navigation"
-        @click="menuOpen = !menuOpen"
-      >
+      <button class="nav-toggle" type="button" :aria-expanded="menuOpen" aria-label="Ouvrir la navigation"
+        @click="menuOpen = !menuOpen">
         <span></span>
         <span></span>
       </button>
