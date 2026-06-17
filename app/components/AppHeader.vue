@@ -21,7 +21,9 @@ function closeMenu() {
           Open QxChat
         </a>
       </nav>
-      <a href="/app" class="btn btn--primary site-header__cta"></a>
+      <a href="/app" class="btn btn--primary site-header__cta">
+        Open QxChat
+      </a>
       <button class="nav-toggle" type="button" :aria-expanded="menuOpen" aria-label="Open navigation"
         @click="menuOpen = !menuOpen">
         <span></span>
