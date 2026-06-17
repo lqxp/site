@@ -54,12 +54,11 @@ const useCases = [
             </div>
 
             <div class="mock-convo mock-convo--active">
-              <span class="mock-avatar mock-avatar--photo"></span>
+              <span class="mock-avatar mock-avatar--github-lqxp"></span>
               <div class="mock-convo__meta">
                 <strong>8e7b9ec9…0e6b9</strong>
                 <p>hello</p>
               </div>
-              <span class="mock-convo__time">8:07 PM</span>
             </div>
 
             <div class="mock-convo">
@@ -68,7 +67,6 @@ const useCases = [
                 <strong>12cb4481…2fae375</strong>
                 <p>💚</p>
               </div>
-              <span class="mock-convo__time">2:22 PM</span>
             </div>
 
             <div class="mock-convo">
@@ -83,22 +81,19 @@ const useCases = [
           <!-- active thread -->
           <div class="mock-thread">
             <div class="mock-thread__header">
-              <span class="mock-avatar mock-avatar--photo"></span>
+              <span class="mock-avatar mock-avatar--github-lqxp"></span>
               <div>
                 <strong>8e7b9ec9…0e6b9</strong>
                 <p>Room conversation · E2EE ready</p>
               </div>
-              <div class="mock-thread__icons">
-                <span class="mock-icon"></span>
-                <span class="mock-icon"></span>
-              </div>
             </div>
+
 
             <div class="mock-thread__day">Jun 8</div>
 
             <div class="mock-thread__messages">
               <div class="mock-msg">
-                <span class="mock-avatar mock-avatar--photo"></span>
+                <span class="mock-avatar mock-avatar--github-kisakay"></span>
                 <div class="mock-msg__body">
                   <strong>2h0 <time>02:32 AM</time></strong>
                   <p>hello</p>
@@ -135,7 +130,7 @@ const useCases = [
             <p class="mock-presence__count">1 online</p>
             <p class="mock-presence__group">Online — 1</p>
             <div class="mock-presence__user">
-              <span class="mock-avatar mock-avatar--pink">2H</span>
+              <span class="mock-avatar mock-avatar--github-kisakay"></span>
               <div>
                 <strong>2h0 <span class="mock-tag">Web</span></strong>
                 <p><span class="mock-dot"></span>Do not disturb</p>
@@ -328,6 +323,20 @@ const useCases = [
 
 .mock-avatar--violet {
   background: var(--mock-violet);
+}
+
+.mock-avatar--github-kisakay {
+  background-image: url("https://github.com/Kisakay.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.mock-avatar--github-lqxp {
+  background-image: url("https://github.com/lqxp.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 /* thread */
