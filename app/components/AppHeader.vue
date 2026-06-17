@@ -13,18 +13,15 @@ function closeMenu() {
         <img src="/app-icon.svg" alt="" class="brand__mark" />
         <span class="brand__name">QxChat</span>
       </NuxtLink>
-
       <nav class="site-nav" :class="{ 'is-open': menuOpen }" aria-label="Main navigation">
         <NuxtLink to="/" exact-active-class="is-active" @click="closeMenu">Home</NuxtLink>
         <NuxtLink to="/features" active-class="is-active" @click="closeMenu">Features</NuxtLink>
         <NuxtLink to="/download" active-class="is-active" @click="closeMenu">Download</NuxtLink>
-        <NuxtLink to="/download" class="btn btn--primary btn--sm site-nav__cta" @click="closeMenu">
-          Download
+        <NuxtLink to="/app" class="btn btn--primary btn--sm site-nav__cta" @click="closeMenu">
+          Open QxChat
         </NuxtLink>
       </nav>
-
-      <NuxtLink to="/download" class="btn btn--primary btn--sm site-header__cta">Download</NuxtLink>
-
+      <NuxtLink to="/app" class="btn btn--primary site-header__cta">Open QxChat</NuxtLink>
       <button class="nav-toggle" type="button" :aria-expanded="menuOpen" aria-label="Open navigation"
         @click="menuOpen = !menuOpen">
         <span></span>
@@ -95,6 +92,11 @@ function closeMenu() {
 
 .site-nav__cta {
   display: none;
+}
+
+.site-header__cta {
+  font-size: 1rem;
+  padding: 10px 22px;
 }
 
 .nav-toggle {
