@@ -1,19 +1,22 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2025-07-15',
+  compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
   ssr: true,
   app: {
-    baseURL: process.env.NUXT_APP_BASE_URL || '/',
+    baseURL: process.env.NUXT_APP_BASE_URL || "/",
     head: {
-      htmlAttrs: { lang: 'fr' },
+      htmlAttrs: { lang: "fr" },
       meta: [
-        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'theme-color', content: '#07111f' }
-      ]
-    }
+        { name: "viewport", content: "width=device-width, initial-scale=1" },
+        { name: "theme-color", content: "#07111f" },
+      ],
+    },
   },
+
   nitro: {
-    preset: 'github_pages'
-  }
-})
+    prerender: {
+      ignore: ["/app"],
+    },
+  },
+});
