@@ -14,18 +14,18 @@ function closeMenu() {
         <span class="brand__name">QxChat</span>
       </NuxtLink>
 
-      <nav class="site-nav" :class="{ 'is-open': menuOpen }" aria-label="Navigation principale">
-        <NuxtLink to="/" exact-active-class="is-active" @click="closeMenu">Accueil</NuxtLink>
-        <NuxtLink to="/features" active-class="is-active" @click="closeMenu">Fonctionnalités</NuxtLink>
-        <NuxtLink to="/download" active-class="is-active" @click="closeMenu">Téléchargement</NuxtLink>
+      <nav class="site-nav" :class="{ 'is-open': menuOpen }" aria-label="Main navigation">
+        <NuxtLink to="/" exact-active-class="is-active" @click="closeMenu">Home</NuxtLink>
+        <NuxtLink to="/features" active-class="is-active" @click="closeMenu">Features</NuxtLink>
+        <NuxtLink to="/download" active-class="is-active" @click="closeMenu">Download</NuxtLink>
         <NuxtLink to="/download" class="btn btn--primary btn--sm site-nav__cta" @click="closeMenu">
-          Télécharger
+          Download
         </NuxtLink>
       </nav>
 
-      <NuxtLink to="/download " class="btn btn--primary btn--sm site-header__cta">Télécharger</NuxtLink>
+      <NuxtLink to="/download" class="btn btn--primary btn--sm site-header__cta">Download</NuxtLink>
 
-      <button class="nav-toggle" type="button" :aria-expanded="menuOpen" aria-label="Ouvrir la navigation"
+      <button class="nav-toggle" type="button" :aria-expanded="menuOpen" aria-label="Open navigation"
         @click="menuOpen = !menuOpen">
         <span></span>
         <span></span>

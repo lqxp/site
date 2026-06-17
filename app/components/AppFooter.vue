@@ -7,18 +7,18 @@ const year = new Date().getFullYear()
     <div class="container site-footer__inner">
       <div class="site-footer__brand">
         <span class="brand__name">QxChat</span>
-        <p>Une messagerie privée, construite sur lqxp.</p>
+        <p>A private messaging service built on lqxp.</p>
       </div>
 
-      <nav class="site-footer__links" aria-label="Liens du pied de page">
-        <NuxtLink to="/">Accueil</NuxtLink>
-        <NuxtLink to="/features">Fonctionnalités</NuxtLink>
-        <NuxtLink to="/download">Téléchargement</NuxtLink>
-        <a href="https://github.com/lqxp/app" target="_blank" rel="noreferrer">Code source</a>
+      <nav class="site-footer__links" aria-label="Footer links">
+        <NuxtLink to="/">Home</NuxtLink>
+        <NuxtLink to="/features">Features</NuxtLink>
+        <NuxtLink to="/download">Download</NuxtLink>
+        <a href="https://github.com/lqxp/app" target="_blank" rel="noreferrer">Source code</a>
       </nav>
     </div>
 
-    <p class="site-footer__meta container">© {{ year }} QxChat — auto-hébergé, comme il se doit.</p>
+    <p class="site-footer__meta container">© {{ year }} QxChat — self-hosted, as it should be.</p>
   </footer>
 </template>
 
