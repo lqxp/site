@@ -6,7 +6,12 @@ useSeoMeta({
   ogTitle: 'QxChat',
   ogDescription: 'A clear, private, cross-platform messenger built on lqxp.',
   ogType: 'website',
-  twitterCard: 'summary_large_image'
+  ogImage: 'https://qxch.at/image.png',
+
+  twitterCard: 'summary_large_image',
+  twitterTitle: 'QxChat',
+  twitterDescription: 'Private self-hosted messaging.',
+  twitterImage: 'https://qxch.at/128x128.png'
 })
 
 const valueProps = [
@@ -602,6 +607,7 @@ const useCases = [
 }
 
 @media (max-width: 900px) {
+
   .hero,
   .definition {
     grid-template-columns: 1fr;
