@@ -17,11 +17,11 @@ function closeMenu() {
         <NuxtLink to="/" exact-active-class="is-active" @click="closeMenu">Home</NuxtLink>
         <NuxtLink to="/features" active-class="is-active" @click="closeMenu">Features</NuxtLink>
         <NuxtLink to="/download" active-class="is-active" @click="closeMenu">Download</NuxtLink>
-        <NuxtLink to="/app" class="btn btn--primary btn--sm site-nav__cta" @click="closeMenu">
+        <a href="/app" class="btn btn--primary btn--sm site-nav__cta">
           Open QxChat
-        </NuxtLink>
+        </a>
       </nav>
-      <NuxtLink to="/app" class="btn btn--primary site-header__cta">Open QxChat</NuxtLink>
+      <a href="/app" class="btn btn--primary site-header__cta"></a>
       <button class="nav-toggle" type="button" :aria-expanded="menuOpen" aria-label="Open navigation"
         @click="menuOpen = !menuOpen">
         <span></span>
