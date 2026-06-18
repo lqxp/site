@@ -11,7 +11,12 @@ useSeoMeta({
   twitterCard: 'summary_large_image',
   twitterTitle: 'QxChat',
   twitterDescription: 'Private self-hosted messaging.',
-  twitterImage: 'https://qxch.at/128x128.png'
+  twitterImage: 'https://qxch.at/image.png'
+})
+useHead({
+  meta: [
+    { name: 'theme-color', content: '#1c71d8' }
+  ]
 })
 
 const valueProps = [
