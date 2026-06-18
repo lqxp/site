@@ -13,5 +13,8 @@
     "nuxt": "^4.4.8",
     "vue": "^3.5.35",
     "vue-router": "^5.1.0"
+  },
+  "devDependencies": {
+    "vite-svg-loader": "^5.1.1"
   }
 }

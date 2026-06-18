@@ -1,8 +1,12 @@
+import svgLoader from 'vite-svg-loader'
+
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
   ssr: true,
-
+  vite: {
+    plugins: [svgLoader()],
+  },
   app: {
     baseURL: process.env.NUXT_APP_BASE_URL || "/",
     head: {
