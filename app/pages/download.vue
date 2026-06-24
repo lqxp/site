@@ -46,14 +46,11 @@ const platformIcons: Record<string, string> = {
   Android: iconAndroid,
 }
 
-const { data: latestRelease } = await useFetch<Release>('https://api.github.com/repos/lqxp/app/releases/latest', {
+const { data: latestRelease } = await useFetch<Release>('/api/latest-release', {
   key: 'lqxp-app-latest-release',
   server: false,
   lazy: false,
   cache: 'no-store',
-  headers: {
-    'cache-control': 'no-cache'
-  },
   default: () => ({ tag_name: '', html_url: 'https://github.com/lqxp/app/releases', assets: [] })
 })
 
