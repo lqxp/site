@@ -4,16 +4,21 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
   ssr: true,
+  css: ['~/assets/css/main.css'],
   vite: {
     plugins: [svgLoader()],
   },
+  experimental: {
+    viewTransition: true,
+  },
   app: {
-    baseURL: process.env.NUXT_APP_BASE_URL || "/",
+    baseURL: "/",
+    pageTransition: { name: 'page', mode: 'out-in' },
     head: {
-      htmlAttrs: { lang: "fr" },
+      htmlAttrs: { lang: "en" },
       meta: [
         { name: "viewport", content: "width=device-width, initial-scale=1" },
-        { name: "theme-color", content: "#07111f" },
+        { name: "theme-color", content: "#1c71d8" },
       ],
       script: [
         {

@@ -1,188 +1,183 @@
-<script setup lang="ts">
-const menuOpen = ref(false)
-const { theme, toggle } = useTheme()
-
-function closeMenu() {
-  menuOpen.value = false
-}
-</script>
-
 <template>
-  <header class="site-header">
-    <div class="container site-header__inner">
-      <NuxtLink to="/" class="brand" @click="closeMenu">
-        <img src="/app-icon.svg" alt="" class="brand__mark" />
-        <span class="brand__name">QxChat</span>
+  <nav class="navbar" :class="{ 'nav-hidden': isHidden }">
+    <div class="nav-content">
+      <NuxtLink to="/" class="logo">
+        <img src="https://qxch.at/app-icon-with-name.svg" alt="QxChat Logo" class="brand-logo-img" />
       </NuxtLink>
-      <nav class="site-nav" :class="{ 'is-open': menuOpen }" aria-label="Main navigation">
-        <NuxtLink to="/" exact-active-class="is-active" @click="closeMenu">Home</NuxtLink>
-        <NuxtLink to="/features" active-class="is-active" @click="closeMenu">Features</NuxtLink>
-        <NuxtLink to="/download" active-class="is-active" @click="closeMenu">Download</NuxtLink>
-        <NuxtLink to="/about" active-class="is-active" @click="closeMenu">About</NuxtLink>
-        <a href="/app" class="btn btn--primary btn--sm site-nav__cta">
-          Open QxChat
-        </a>
-      </nav>
-      <div class="site-header__actions">
-        <button
-          class="btn--icon"
-          type="button"
-          :aria-label="theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'"
-          @click="toggle"
-        >
-          <!-- Sun icon (shown in dark mode = currently dark, click for light) -->
-          <svg v-if="theme === 'dark'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="5"/>
-            <line x1="12" y1="1" x2="12" y2="3"/>
-            <line x1="12" y1="21" x2="12" y2="23"/>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-            <line x1="1" y1="12" x2="3" y2="12"/>
-            <line x1="21" y1="12" x2="23" y2="12"/>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-          </svg>
-          <!-- Moon icon (shown in light mode = currently light, click for dark) -->
-          <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-          </svg>
-        </button>
-        <a href="/app" class="btn btn--primary site-header__cta">
-          Open QxChat
-        </a>
+
+      <div class="nav-links" :class="{ active: isMobileMenuOpen }">
+        <NuxtLink to="/" @click="closeMobileNav">Home</NuxtLink>
+        <NuxtLink to="/download" @click="closeMobileNav">Download</NuxtLink>
+        <NuxtLink to="/wiki" @click="closeMobileNav">Docs</NuxtLink>
       </div>
-      <button class="nav-toggle" type="button" :aria-expanded="menuOpen" aria-label="Open navigation"
-        @click="menuOpen = !menuOpen">
-        <span></span>
-        <span></span>
-      </button>
+
+      <div class="nav-actions">
+        <button
+          class="theme-toggle-btn"
+          id="theme-toggle"
+          @click="toggleTheme"
+          aria-label="Toggle Theme"
+          title="Toggle Theme"
+        >
+          <ClientOnly>
+            <svg v-if="isDark" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <svg v-else width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          </ClientOnly>
+        </button>
+
+        <a href="https://qxch.at/app" target="_blank" rel="noopener" class="nav-login" id="nav-login-link">
+          <span>Open App</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+        </a>
+
+        <button
+          class="nav-toggle"
+          :class="{ active: isMobileMenuOpen }"
+          @click="isMobileMenuOpen = !isMobileMenuOpen"
+          aria-label="Menu"
+        >
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+      </div>
     </div>
-  </header>
+
+    <!-- Mobile Nav Overlay -->
+    <div
+      class="mobile-nav-overlay"
+      :class="{ active: isMobileMenuOpen }"
+      @click="closeMobileNav"
+    ></div>
+  </nav>
 </template>
 
+<script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue'
+
+const isHidden = ref(false)
+const isMobileMenuOpen = ref(false)
+const isDark = ref(false)
+
+const closeMobileNav = () => {
+  isMobileMenuOpen.value = false
+  if (typeof document !== 'undefined') {
+    document.body.style.overflow = ''
+  }
+}
+
+const toggleTheme = () => {
+  isDark.value = !isDark.value
+  if (isDark.value) {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    localStorage.setItem('qxchat-theme', 'dark')
+  } else {
+    document.documentElement.removeAttribute('data-theme')
+    localStorage.setItem('qxchat-theme', 'light')
+  }
+}
+
+let lastScrollY = 0
+const handleScroll = () => {
+  if (typeof window === 'undefined') return
+  const scrollY = window.scrollY
+  if (scrollY > lastScrollY && scrollY > 100) {
+    isHidden.value = true
+  } else {
+    isHidden.value = false
+  }
+  lastScrollY = scrollY
+}
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll, { passive: true })
+  const theme = document.documentElement.getAttribute('data-theme')
+  isDark.value = theme === 'dark'
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+})
+</script>
+
 <style scoped>
-.site-header {
-  position: sticky;
-  top: 0;
-  z-index: 30;
-  background: color-mix(in srgb, var(--paper) 92%, transparent);
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid var(--line);
-}
-
-.site-header__inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  height: 72px;
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.brand__mark {
-  width: 28px;
-  height: 28px;
-}
-
-.brand__name {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.05rem;
-}
-
-.site-nav {
-  display: flex;
-  align-items: center;
-  gap: 28px;
-  font-size: 0.93rem;
-  font-weight: 500;
-  color: var(--slate);
-}
-
-.site-nav a {
-  padding-bottom: 4px;
-  border-bottom: 2px solid transparent;
-  transition: color 150ms ease, border-color 150ms ease;
-}
-
-.site-nav a:hover {
-  color: var(--ink);
-}
-
-.site-nav a.is-active {
-  color: var(--ink);
-  border-bottom-color: var(--blue-700);
-}
-
-.site-nav__cta {
-  display: none;
-}
-
-.site-header__actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.site-header__cta {
-  font-size: 1rem;
-  padding: 10px 22px;
-}
-
-.nav-toggle {
-  display: none;
-  flex-direction: column;
-  justify-content: center;
-  gap: 5px;
-  width: 36px;
-  height: 36px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-}
-
-.nav-toggle span {
+.brand-logo-img {
+  height: 52px;
+  width: auto;
+  max-width: 205px;
+  object-fit: contain;
   display: block;
-  height: 1.5px;
-  margin-inline: 8px;
-  background: var(--ink);
 }
 
-@media (max-width: 760px) {
-  .site-header__cta {
-    display: none;
-  }
+.logo-title {
+  font-weight: 800;
+  font-size: 1.3rem;
+  letter-spacing: -0.03em;
+  color: var(--text-color);
+}
 
-  .nav-toggle {
-    display: flex;
-  }
+.theme-toggle-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
 
-  .site-nav {
-    display: none;
-    position: absolute;
-    top: 72px;
-    left: 0;
-    right: 0;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 18px;
-    padding: 22px 24px 28px;
-    background: var(--paper);
-    border-bottom: 1px solid var(--line);
-  }
+.theme-toggle-btn:active {
+  transform: scale(0.92);
+}
 
-  .site-nav.is-open {
-    display: flex;
-  }
+.theme-toggle-btn svg {
+  width: 19px;
+  height: 19px;
+}
 
-  .site-nav__cta {
-    display: inline-flex;
-    margin-top: 6px;
-  }
+.nav-login {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent-color);
+  color: #ffffff !important;
+  font-weight: 700;
+  padding: 0.65rem 1.4rem;
+  border-radius: 50px;
+  text-decoration: none;
+  font-size: 0.95rem;
+  border: 1px solid var(--accent-color);
+  box-shadow: 0 4px 12px rgba(28, 113, 216, 0.3);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-login:active {
+  transform: scale(0.96);
+}
+
+.nav-login:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(28, 113, 216, 0.4);
+  background: #1765c4;
 }
 </style>
