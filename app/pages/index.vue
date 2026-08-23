@@ -2,7 +2,7 @@
   <div class="page-index">
     <section class="hero hero-bento">
       <div class="bento-container">
-        
+
         <!-- Bento Item 1: Main Title & CTA (Transparent) -->
         <div class="bento-title-card">
           <h1 class="hero-title reveal-text">
@@ -88,7 +88,7 @@
               </svg>
             </div>
           </div>
-          
+
           <div class="card-bottom-wrap">
             <h3>Documentation</h3>
             <div class="card-bottom-row">
@@ -153,7 +153,7 @@
     </section>
 
     <div class="slide-content-wrapper">
-      
+
       <!-- Feature Banner Section -->
       <section id="features" class="feature-section">
         <div class="container" style="max-width: 900px; margin: 0 auto; text-align: center;">
@@ -178,7 +178,7 @@
             <p class="mobile-showcase-desc">
               Experience instant encrypted message relays, low-latency push notifications, and clear WebRTC voice & video calls directly on your phone.
             </p>
-            
+
             <div class="mobile-feature-pills">
               <div class="mobile-pill">
                 <div class="pill-dot"></div>
@@ -211,7 +211,7 @@
           <!-- Centered Realistic Smartphone Frame (No Black Letterboxing) -->
           <div class="mobile-phone-wrapper">
             <div class="smartphone-frame">
-              <div class="smartphone-island"></div>
+              <!-- <div class="smartphone-island"></div> -->
               <div class="smartphone-screen">
                 <video src="/assets/mobile_demo.mp4" autoplay muted loop playsinline disablePictureInPicture disableremoteplayback class="smartphone-video"></video>
               </div>
@@ -236,7 +236,7 @@
           <div class="showcase-grid">
             <div class="showcase-card">
               <div class="showcase-card__img-wrap">
-                <img src="/assets/texting_showcase.png" alt="Text Rooms" />
+                <img src="/assets/marketing/overview_black.png" alt="Text Rooms" />
               </div>
               <div class="showcase-card__content">
                 <h3>Private Text Rooms</h3>
@@ -246,7 +246,7 @@
 
             <div class="showcase-card">
               <div class="showcase-card__img-wrap">
-                <img src="/assets/stream_showcase.png" alt="Voice and Video Streaming" />
+                <img src="/assets/marketing/stream_black.png" alt="Voice and Video Streaming" />
               </div>
               <div class="showcase-card__content">
                 <h3>WebRTC Calls & Screen Share</h3>
@@ -256,7 +256,7 @@
 
             <div class="showcase-card">
               <div class="showcase-card__img-wrap">
-                <img src="/assets/writing_showcase.png" alt="Quick Writing and Markdown" />
+                <img src="/assets/marketing/markdown_dark.png" alt="Quick Writing and Markdown" />
               </div>
               <div class="showcase-card__content">
                 <h3>Markdown & Media Sharing</h3>
@@ -266,7 +266,7 @@
 
             <div class="showcase-card">
               <div class="showcase-card__img-wrap">
-                <img src="/assets/marketing/overview_white.png" alt="Desktop and Mobile Experience" />
+                <img src="/assets/marketing/stream_white.png" alt="Desktop and Mobile Experience" />
               </div>
               <div class="showcase-card__content">
                 <h3>Native Lightweight Apps</h3>
@@ -280,7 +280,7 @@
       <!-- Performance Benchmarks -->
       <section ref="benchSectionRef" class="capabilities-section" :class="{ 'is-bench-visible': isBenchVisible }">
         <div class="container" style="max-width: 1100px; margin: 0 auto;">
-          
+
           <div class="bench-header-wrap">
             <span class="section-tag-eyebrow">Performance Benchmarks</span>
             <h2 class="bench-main-heading">
@@ -455,7 +455,7 @@
 
       <section id="contributors" class="contributors-row-section">
         <div class="container" style="max-width: 900px; margin: 0 auto; text-align: center;">
-          
+
           <span class="section-tag-eyebrow">Open Source Contributors</span>
           <h2 class="contributors-row-title">
             Contributors
@@ -510,7 +510,7 @@
               </div>
               <div class="thank-you-content">
                 <p class="thank-you-text">
-                  A massive <strong>thank you</strong> to all contributors who build and improve QxChat, and to our community for the 
+                  A massive <strong>thank you</strong> to all contributors who build and improve QxChat, and to our community for the
                   <a href="https://github.com/lqxp" target="_blank" rel="noopener" class="thank-you-stars-badge">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
                       <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
