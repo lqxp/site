@@ -379,7 +379,6 @@ interface ReleaseAsset {
 }
 
 interface ReleaseData {
-  version: string
   tag_name: string
   published_at: string
   assets: ReleaseAsset[]
@@ -395,9 +394,16 @@ const formatBytes = (bytes?: number) => {
   return `${(mb / 1024).toFixed(2)} GB`
 }
 
-const { data: releaseData } = await useFetch<ReleaseData>('/api/latest-release', {
+// Fetch directly from GitHub on the client so we always see the freshest release,
+// instead of going through a server route that can be cached/stale.
+const { data: releaseData } = await useFetch<ReleaseData>('https://api.github.com/repos/lqxp/app/releases/latest', {
+  server: false,
+  cache: 'no-store',
+  headers: {
+    accept: 'application/vnd.github+json',
+    'X-GitHub-Api-Version': '2022-11-28'
+  },
   default: () => ({
-    version: 'v1.17.0',
     tag_name: 'v1.17.0',
     published_at: '',
     assets: []
