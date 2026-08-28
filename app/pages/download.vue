@@ -1116,8 +1116,8 @@ const primaryDownloadUrl = computed(() => primaryAsset.value.url)
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: var(--text-color);
-  color: var(--bg-secondary);
+  background: var(--accent-color);
+  color: #ffffff;
   padding: 0 1.35rem;
   height: 50px;
   border-radius: 12px;
@@ -1128,8 +1128,8 @@ const primaryDownloadUrl = computed(() => primaryAsset.value.url)
 }
 
 .hub-download-btn:hover {
-  background: var(--accent-color);
-  color: #ffffff;
+  background: var(--text-color);
+  color: var(--bg-secondary);
 }
 
 .download-sarcasm-banner {
