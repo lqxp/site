@@ -1655,13 +1655,12 @@ onUnmounted(() => {
   border-radius: 50%;
   padding: 3px;
   background: var(--bg-secondary);
-  border: 3.5px solid var(--bg-color);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  border: 2px solid var(--bg-color);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  transition: border-color 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: border-color 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .contributor-img {
@@ -1687,7 +1686,6 @@ onUnmounted(() => {
 
 .contributor-avatar-pill:hover .avatar-ring {
   border-color: var(--accent-color);
-  box-shadow: 0 12px 30px rgba(28, 113, 216, 0.3);
 }
 
 .contributor-avatar-pill:hover .contributor-img {
@@ -1781,8 +1779,6 @@ onUnmounted(() => {
 
 .thank-you-pill:hover {
   border-color: var(--accent-color);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.07);
 }
 
 .thank-you-icon-wrap {
