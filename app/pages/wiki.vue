@@ -1705,10 +1705,6 @@ onUnmounted(() => {
   flex-shrink: 0;
 }
 
-.sidebar-footer {
-  flex-shrink: 0;
-}
-
 .sidebar-header {
   display: flex;
   align-items: center;
@@ -1778,9 +1774,9 @@ onUnmounted(() => {
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
+  overscroll-behavior: contain;
   padding-right: 0.5rem;
   margin-right: -0.5rem;
-  overscroll-behavior: contain;
   scrollbar-width: thin;
   scrollbar-color: var(--border-strong, var(--border-color)) transparent;
 }
@@ -1863,7 +1859,9 @@ onUnmounted(() => {
 }
 
 .sidebar-footer {
-  padding-top: 1.25rem;
+  flex-shrink: 0;
+  padding-top: 1rem;
+  margin-top: 1rem;
   border-top: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
