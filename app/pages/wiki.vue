@@ -30,7 +30,7 @@
         </div>
 
         <!-- Nav Tree -->
-        <nav class="sidebar-nav">
+        <nav class="sidebar-nav" data-lenis-prevent>
           <div v-for="group in filteredNavGroups" :key="group.title" class="nav-group">
             <div class="group-title">{{ group.title }}</div>
             <ul class="group-list">
