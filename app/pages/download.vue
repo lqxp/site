@@ -777,18 +777,12 @@ const primaryDownloadUrl = computed(() => primaryAsset.value.url)
   font-size: 0.95rem;
   font-weight: 700;
   text-decoration: none;
-  box-shadow: 0 4px 14px rgba(28, 113, 216, 0.3);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background-color 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .primary-download-btn:hover {
-  transform: translateY(-2px);
-  background: #1765c4;
-  box-shadow: 0 6px 18px rgba(28, 113, 216, 0.4);
-}
-
-.primary-download-btn:active {
-  transform: scale(0.96);
+  background: var(--text-color);
+  color: var(--bg-secondary);
 }
 
 .web-client-btn {
@@ -804,16 +798,12 @@ const primaryDownloadUrl = computed(() => primaryAsset.value.url)
   font-size: 0.9rem;
   font-weight: 600;
   text-decoration: none;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: border-color 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .web-client-btn:hover {
   border-color: var(--accent-color);
-  transform: translateY(-2px);
-}
-
-.web-client-btn:active {
-  transform: scale(0.96);
+  color: var(--accent-color);
 }
 
 .platforms-section {
@@ -864,11 +854,10 @@ const primaryDownloadUrl = computed(() => primaryAsset.value.url)
   padding: 2.2rem 1.8rem;
   display: flex;
   flex-direction: column;
-  transition: transform 0.25s ease, border-color 0.25s ease;
+  transition: border-color 0.25s ease;
 }
 
 .platform-hub-card:hover {
-  transform: translateY(-4px);
   border-color: var(--accent-color);
 }
 
