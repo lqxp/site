@@ -1540,27 +1540,19 @@ onUnmounted(() => {
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  padding: 4px 12px;
-  border-radius: 50px;
   margin-bottom: 1rem;
 }
 
 .bench-row-tag--green {
   color: #10b981;
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.25);
 }
 
 .bench-row-tag--blue {
   color: #38bdf8;
-  background: rgba(56, 189, 248, 0.1);
-  border: 1px solid rgba(56, 189, 248, 0.25);
 }
 
 .bench-row-tag--orange {
   color: #f97316;
-  background: rgba(249, 115, 22, 0.1);
-  border: 1px solid rgba(249, 115, 22, 0.25);
 }
 
 .bench-row-title {
