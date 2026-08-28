@@ -339,7 +339,6 @@
         <!-- Sarcastic Comparison Pill Banner -->
         <div class="download-sarcasm-banner">
           <div class="sarcasm-pill">
-            <span class="sarcasm-dot"></span>
             <span>Zero bundled Chromium instances harmed in the making of this client. Discord installer: 140 MB. QxChat: 6 MB.</span>
           </div>
         </div>
@@ -1125,18 +1124,12 @@ const primaryDownloadUrl = computed(() => primaryAsset.value.url)
   font-size: 0.92rem;
   font-weight: 700;
   text-decoration: none;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background-color 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hub-download-btn:hover {
   background: var(--accent-color);
   color: #ffffff;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 14px rgba(28, 113, 216, 0.3);
-}
-
-.hub-download-btn:active {
-  transform: scale(0.96);
 }
 
 .download-sarcasm-banner {
@@ -1159,15 +1152,6 @@ const primaryDownloadUrl = computed(() => primaryAsset.value.url)
   color: var(--text-secondary);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
   text-align: center;
-}
-
-.sarcasm-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #10b981;
-  box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
-  flex-shrink: 0;
 }
 
 @media (max-width: 960px) {
