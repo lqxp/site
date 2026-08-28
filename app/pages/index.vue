@@ -1831,7 +1831,6 @@ onUnmounted(() => {
 .thank-you-stars-badge:hover {
   background: rgba(245, 158, 11, 0.22);
   border-color: #f59e0b;
-  transform: scale(1.04);
 }
 
 .how-to-section {
