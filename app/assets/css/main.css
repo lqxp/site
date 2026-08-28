@@ -892,10 +892,9 @@ h4 {
 }
 
 .support-btn:hover {
-  background: var(--bg-secondary);
-  border-color: var(--bg-secondary);
-  color: var(--text-color);
-  transform: translateY(-2px);
+  background: var(--text-color);
+  border-color: var(--text-color);
+  color: var(--bg-secondary);
 }
 
 .support-characters {
@@ -1727,7 +1726,6 @@ h4 {
 .footer-socials a:hover {
   background: var(--text-color);
   color: var(--bg-secondary);
-  transform: translateY(-3px);
 }
 
 .footer-socials svg {

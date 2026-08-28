@@ -245,19 +245,13 @@ const scrollToTop = () => {
   justify-content: center;
   color: var(--text-color);
   text-decoration: none;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background-color 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .footer-socials a:hover {
   background: var(--accent-color);
   color: #ffffff;
   border-color: var(--accent-color);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(28, 113, 216, 0.3);
-}
-
-.footer-socials a:active {
-  transform: scale(0.92);
 }
 
 @media (max-width: 1024px) {

@@ -1914,4 +1914,14 @@ onUnmounted(() => {
     margin: 2px 2px;
   }
 }
+
+/* Neutralize the wiggle/scale on the support banner buttons */
+.support-banner .btn-primary:hover,
+.support-banner .btn-primary:active,
+.support-banner .btn-secondary:hover,
+.support-banner .btn-secondary:active,
+.support-banner .support-btn:hover,
+.support-banner .support-btn:active {
+  transform: none;
+}
 </style>

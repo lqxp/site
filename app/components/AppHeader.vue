@@ -167,17 +167,10 @@ onUnmounted(() => {
   text-decoration: none;
   font-size: 0.95rem;
   border: 1px solid var(--accent-color);
-  box-shadow: 0 4px 12px rgba(28, 113, 216, 0.3);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.nav-login:active {
-  transform: scale(0.96);
+  transition: background-color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .nav-login:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(28, 113, 216, 0.4);
   background: #1765c4;
 }
 </style>
