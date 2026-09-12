@@ -1,11 +1,13 @@
 <template>
-  <div class="page-download-hub">
+  <div class="page-download-hub" :class="{ 'is-loading-release': isReleaseLoading }">
     
     <section class="download-hero">
       <div class="container" style="max-width: 960px; margin: 0 auto; text-align: center;">
         
         <h1 class="download-hero-title">
-          Download QxChat {{ releaseData?.tag_name }}
+          Download QxChat
+          <span v-if="isReleaseLoading" class="version-skeleton" aria-label="Loading latest version"></span>
+          <template v-else>{{ releaseData?.tag_name }}</template>
         </h1>
         
         <p class="download-hero-desc">
@@ -136,16 +138,57 @@
                   <h3>macOS</h3>
                 </div>
               </div>
-              <span class="hub-top-badge">Universal</span>
+
+              <!-- Arch Dropdown Menu on Hover & Click -->
+              <div class="arch-dropdown-wrapper" :class="{ 'is-open': macArchOpen }" @mouseleave="macArchOpen = false">
+                <button
+                  type="button"
+                  class="arch-dropdown-trigger"
+                  @click.stop="macArchOpen = !macArchOpen"
+                  :title="'Current architecture: ' + macArch"
+                >
+                  <span>{{ macArch.toUpperCase() }}</span>
+                  <svg class="dropdown-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
+                <div class="arch-dropdown-menu">
+                  <div class="dropdown-menu-header">CPU Architecture</div>
+                  <button
+                    type="button"
+                    class="dropdown-item"
+                    :class="{ active: macArch === 'arm64' }"
+                    @click="macArch = 'arm64'; macArchOpen = false"
+                  >
+                    <span class="dropdown-item-radio"></span>
+                    <div class="dropdown-item-text">
+                      <span class="dropdown-item-title">ARM64</span>
+                      <span class="dropdown-item-sub">Apple Silicon (M)</span>
+                    </div>
+                  </button>
+                  <button
+                    type="button"
+                    class="dropdown-item"
+                    :class="{ active: macArch === 'x64' }"
+                    @click="macArch = 'x64'; macArchOpen = false"
+                  >
+                    <span class="dropdown-item-radio"></span>
+                    <div class="dropdown-item-text">
+                      <span class="dropdown-item-title">x64 (Intel)</span>
+                      <span class="dropdown-item-sub">Intel Core Macs</span>
+                    </div>
+                  </button>
+                </div>
+              </div>
             </div>
 
             <div class="arch-tabs arch-tabs--single">
-              <span class="universal-badge">Apple Silicon & Intel</span>
+              <span class="universal-badge">.dmg Disk Image</span>
             </div>
 
             <div class="hub-action-row">
               <a :href="macAsset.url" target="_blank" rel="noopener" class="hub-download-btn">
-                <span>Download .dmg</span>
+                <span>Download .dmg ({{ macArch === 'arm64' ? 'ARM64' : 'x64' }})</span>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                   <polyline points="7 10 12 15 17 10"></polyline>
@@ -367,6 +410,8 @@ useHead({
 
 const winArch = ref<'x64' | 'arm64'>('x64')
 const winArchOpen = ref(false)
+const macArch = ref<'x64' | 'arm64'>('arm64')
+const macArchOpen = ref(false)
 const linuxArch = ref<'x64' | 'arm64'>('x64')
 const linuxArchOpen = ref(false)
 const linuxFormat = ref<'AppImage' | 'deb' | 'rpm'>('AppImage')
@@ -381,6 +426,14 @@ interface ReleaseData {
   tag_name: string
   published_at: string
   assets: ReleaseAsset[]
+  downloads?: {
+    windows?: { x64?: string; arm64?: string }
+    macos?: { arm64?: string; x64?: string }
+    linux?: { appimage_x64?: string; appimage_arm64?: string }
+    android?: string
+    ios?: string
+    nixos?: string
+  }
 }
 
 const formatBytes = (bytes?: number) => {
@@ -393,21 +446,20 @@ const formatBytes = (bytes?: number) => {
   return `${(mb / 1024).toFixed(2)} GB`
 }
 
-// Fetch directly from GitHub on the client so we always see the freshest release,
-// instead of going through a server route that can be cached/stale.
-const { data: releaseData } = await useFetch<ReleaseData>('https://api.github.com/repos/lqxp/app/releases/latest', {
-  server: false,
-  cache: 'no-store',
-  headers: {
-    accept: 'application/vnd.github+json',
-    'X-GitHub-Api-Version': '2022-11-28'
-  },
-  default: () => ({
-    tag_name: 'v1.17.0',
-    published_at: '',
-    assets: []
-  })
-})
+// Fetch via the backend release API (cached, avoids GitHub rate-limits)
+// so the split macOS binaries (ARM64 / Intel) resolve consistently.
+// No hardcoded default version: while the API hasn't responded yet,
+// asset links fall back to '#' and buttons show a loading state.
+const { data: releaseData, pending: releasePending } = await useFetch<ReleaseData>('/api/release')
+
+const isReleaseLoading = computed(() => releasePending.value || !releaseData.value?.tag_name)
+
+const loadingAsset = {
+  name: 'Loading…',
+  url: '#',
+  size: 0,
+  sizeStr: ''
+}
 
 const detectedOS = ref<'win' | 'mac' | 'linux' | 'android' | 'ios' | 'nixos' | 'other'>('win')
 const detectedArch = ref<'x64' | 'arm64'>('x64')
@@ -455,7 +507,7 @@ const detectedOSName = computed(() => {
 })
 
 const detectedArchDisplay = computed(() => {
-  if (detectedOS.value === 'mac') return 'Universal'
+  if (detectedOS.value === 'mac') return macArch.value === 'arm64' ? 'ARM64' : 'x64'
   if (detectedArch.value === 'arm64') return 'ARM64'
   return 'x64'
 })
@@ -500,6 +552,7 @@ const resolveAsset = (
 const winAsset = computed(() => {
   const isArm = winArch.value === 'arm64'
   const tag = releaseData.value?.tag_name
+  if (!tag) return loadingAsset
   const ver = tag.replace(/^v/, '')
   const base = `https://github.com/lqxp/app/releases/download/${tag}`
 
@@ -519,24 +572,73 @@ const winAsset = computed(() => {
   )
 })
 
-// macOS Asset
+// macOS Asset (split binaries: Apple Silicon ARM64 vs Intel x64)
 const macAsset = computed(() => {
   const tag = releaseData.value?.tag_name
+  if (!tag) return loadingAsset
   const ver = tag.replace(/^v/, '')
   const base = `https://github.com/lqxp/app/releases/download/${tag}`
+  const assets = releaseData.value?.assets ?? []
+  const byName = (matcher: (n: string) => boolean) =>
+    assets.find(a => matcher(a.name.toLowerCase()))
+  const backendUrl = macArch.value === 'arm64'
+    ? releaseData.value?.downloads?.macos?.arm64
+    : releaseData.value?.downloads?.macos?.x64
 
-  return resolveAsset(
-    n => (n.includes('universal') || n.includes('mac') || n.includes('darwin')) && n.endsWith('.dmg'),
-    `QxChat_${ver}_universal.dmg`,
-    `${base}/QxChat_${ver}_universal.dmg`,
-    25585254
+  const fallbackName = macArch.value === 'arm64'
+    ? `QxChat_${ver}_aarch64.dmg`
+    : `QxChat_${ver}_x64.dmg`
+  const fallbackSize = macArch.value === 'arm64' ? 19722525 : 19987034
+
+  if (macArch.value === 'arm64') {
+    const asset = byName(n =>
+      n.endsWith('.dmg') &&
+      (n.includes('aarch64') || n.includes('arm64') || n.includes('apple-silicon'))
+    ) ?? byName(n =>
+      // Backwards compat with older universal builds
+      n.endsWith('.dmg') && (n.includes('universal') || (n.includes('mac') || n.includes('darwin')))
+    )
+    if (asset) {
+      return { name: asset.name, url: asset.browser_download_url, size: asset.size, sizeStr: formatBytes(asset.size) }
+    }
+    if (backendUrl) {
+      return { name: fallbackName, url: backendUrl, size: fallbackSize, sizeStr: formatBytes(fallbackSize) }
+    }
+    return {
+      name: fallbackName,
+      url: `${base}/${fallbackName}`,
+      size: fallbackSize,
+      sizeStr: formatBytes(fallbackSize)
+    }
+  }
+
+  const asset = byName(n =>
+    n.endsWith('.dmg') &&
+    !n.includes('aarch64') && !n.includes('arm64') && !n.includes('apple-silicon') &&
+    (n.includes('x64') || n.includes('x86_64') || n.includes('intel'))
+  ) ?? byName(n =>
+    // Backwards compat with older universal builds
+    n.endsWith('.dmg') && (n.includes('universal') || (n.includes('mac') || n.includes('darwin')))
   )
+  if (asset) {
+    return { name: asset.name, url: asset.browser_download_url, size: asset.size, sizeStr: formatBytes(asset.size) }
+  }
+  if (backendUrl) {
+    return { name: fallbackName, url: backendUrl, size: fallbackSize, sizeStr: formatBytes(fallbackSize) }
+  }
+  return {
+    name: fallbackName,
+    url: `${base}/${fallbackName}`,
+    size: fallbackSize,
+    sizeStr: formatBytes(fallbackSize)
+  }
 })
 
 // Linux Asset
 const linuxAsset = computed(() => {
   const isArm = linuxArch.value === 'arm64'
   const tag = releaseData.value?.tag_name
+  if (!tag) return loadingAsset
   const ver = tag.replace(/^v/, '')
   const base = `https://github.com/lqxp/app/releases/download/${tag}`
 
@@ -594,6 +696,7 @@ const linuxAsset = computed(() => {
 // Android Asset
 const androidAsset = computed(() => {
   const tag = releaseData.value?.tag_name
+  if (!tag) return loadingAsset
   const ver = tag.replace(/^v/, '')
   const base = `https://github.com/lqxp/app/releases/download/${tag}`
 
@@ -608,6 +711,7 @@ const androidAsset = computed(() => {
 // iOS Asset
 const iosAsset = computed(() => {
   const tag = releaseData.value?.tag_name
+  if (!tag) return loadingAsset
   const ver = tag.replace(/^v/, '')
   const base = `https://github.com/lqxp/app/releases/download/${tag}`
 
@@ -622,6 +726,7 @@ const iosAsset = computed(() => {
 // NixOS Asset
 const nixosAsset = computed(() => {
   const tag = releaseData.value?.tag_name
+  if (!tag) return loadingAsset
   const ver = tag.replace(/^v/, '')
   const base = `https://github.com/lqxp/app/releases/download/${tag}`
 
@@ -699,6 +804,28 @@ const primaryDownloadUrl = computed(() => primaryAsset.value.url)
   line-height: 1.05;
   color: var(--text-color);
   margin-bottom: 1.25rem;
+}
+
+.version-skeleton {
+  display: inline-block;
+  width: 3.5ch;
+  height: 0.9em;
+  border-radius: 0.2em;
+  vertical-align: baseline;
+  background: linear-gradient(90deg, var(--surface-raised) 25%, var(--border-color) 50%, var(--surface-raised) 75%);
+  background-size: 200% 100%;
+  animation: version-shimmer 1.2s ease-in-out infinite;
+}
+
+@keyframes version-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.is-loading-release .hub-download-btn,
+.is-loading-release .primary-download-btn {
+  opacity: 0.55;
+  pointer-events: none;
 }
 
 .download-hero-desc {
