@@ -2,7 +2,7 @@
   <nav class="navbar" :class="{ 'nav-hidden': isHidden }">
     <div class="nav-content">
       <NuxtLink to="/" class="logo">
-        <img src="https://qxch.at/app-icon-with-name.svg" alt="QxChat Logo" class="brand-logo-img" />
+        <img src="/app-icon-with-name.svg" alt="QxChat Logo" class="brand-logo-img" />
       </NuxtLink>
 
       <div class="nav-links" :class="{ active: isMobileMenuOpen }">

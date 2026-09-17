@@ -9,7 +9,7 @@
     <div class="footer-container">
       <div class="col-logo">
         <div class="footer-logo">
-          <img src="https://qxch.at/app-icon-with-name.svg" alt="QxChat Logo" class="footer-brand-logo-img" />
+          <img src="/app-icon-with-name.svg" alt="QxChat Logo" class="footer-brand-logo-img" />
         </div>
         <div class="footer-copyright">
           QxChat © {{ new Date().getFullYear() }}<br />
