@@ -1,4 +1,5 @@
 import svgLoader from 'vite-svg-loader'
+import { wikiSections } from './app/utils/wiki'
 
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
@@ -22,6 +23,12 @@ export default defineNuxtConfig({
       { loc: '/', changefreq: 'daily', priority: 1.0 },
       { loc: '/download', changefreq: 'weekly', priority: 0.9 },
       { loc: '/wiki', changefreq: 'weekly', priority: 0.8 },
+      // One indexable URL per handbook section (routed pagination).
+      ...wikiSections.map(s => ({
+        loc: `/wiki/${s.id}`,
+        changefreq: 'weekly' as const,
+        priority: 0.7,
+      })),
     ],
   },
   robots: {

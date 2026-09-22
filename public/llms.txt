@@ -10,10 +10,35 @@
 
 ## Resources
 
-- [GitHub organization (lqxp)](https://github.com/lqxp) — All source code: app, client, server core, site. Bug reports and contributions via Issues and Pull Requests.
+- [GitHub organization (lqxp)](https://github.com/lqxp) — All source code. Bug reports and contributions via Issues and Pull Requests.
 - [Discord community](https://discord.wf/qxchat) — Official community chat and support.
 - [Web client](https://qxch.at/app) — Hosted web version of QxChat.
 - [Default in-app room](https://qxch.at/app) — Open the web client or any native app to join the default QxChat room and talk to the team directly.
+
+## Repositories (all MIT, under github.com/lqxp)
+
+- [lqxp/lqxp](https://github.com/lqxp/lqxp) — Server core and protocol (Rust): lightweight E2EE irc-like network, qxprotocol binary, WebSocket + HTTP API.
+- [lqxp/client](https://github.com/lqxp/client) — Core QxChat client (Vue): cross-platform UI used by the Tauri desktop/mobile apps and the web client.
+- [lqxp/app](https://github.com/lqxp/app) — Desktop/mobile apps (Tauri v2 + Rust): native binaries, releases and installers.
+- [lqxp/site](https://github.com/lqxp/site) — Official public website (this site): landing, download and handbook pages.
+- [lqxp/qxchat.ts](https://github.com/lqxp/qxchat.ts) — High-performance selfbot SDK for QxChat, written natively for Bun (TypeScript).
+
+## Documentation (one page per guide — all indexable)
+
+- [Handbook index](https://getqxchat.com/wiki) — Full guide listing.
+- [Why QxChat exists](https://getqxchat.com/wiki/why-qxchat-exists) — Motivation and zero-logs design.
+- [How it works](https://getqxchat.com/wiki/how-it-works) — On-device keys, zero-knowledge relay, P2P media.
+- [The technology](https://getqxchat.com/wiki/the-technology) — Vue 3, Tauri v2, Rust, WebRTC stack.
+- [Open source, always](https://getqxchat.com/wiki/open-source) — MIT license, auditability.
+- [Join the community](https://getqxchat.com/wiki/join-community) — Download, Discord, GitHub.
+- [Architecture](https://getqxchat.com/wiki/architecture) — Server modules, transports, storage model.
+- [Account Authentication](https://getqxchat.com/wiki/authentication) — Passwords, BIP39 recovery, sessions.
+- [Client Signature Protocol](https://getqxchat.com/wiki/signature-protocol) — Hybrid ECDSA + ML-DSA signatures.
+- [Message Transport](https://getqxchat.com/wiki/message-transport) — WebSocket opcodes and E2EE envelope.
+- [QXP-PHANTOM Protocol](https://getqxchat.com/wiki/phantom-protocol) — Blind-slot friend requests.
+- [Cryptographic Primitives](https://getqxchat.com/wiki/crypto-primitives) — Exact primitives and sizes.
+- [Anti-Abuse](https://getqxchat.com/wiki/anti-abuse) — Rate limits, VDF, CAPTCHA, Privacy Pass.
+- [Changelog & Gap Report](https://getqxchat.com/wiki/protocol-changes) — Spec vs shipped.
 
 ## Contact & Support
 
