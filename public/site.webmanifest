@@ -1,0 +1,23 @@
+{
+  "name": "QxChat",
+  "short_name": "QxChat",
+  "description": "Private, self-hosted, end-to-end encrypted messaging. Your server. Your rules.",
+  "start_url": "https://getqxchat.com/",
+  "scope": "https://getqxchat.com/",
+  "display": "standalone",
+  "background_color": "#f6f8fb",
+  "theme_color": "#1c71d8",
+  "icons": [
+    {
+      "src": "/128x128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "/app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

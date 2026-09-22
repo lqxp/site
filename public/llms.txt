@@ -1,0 +1,49 @@
+# QxChat
+
+> QxChat is an open-source (MIT), end-to-end encrypted messaging platform you host on your own server. Private rooms, client-side E2EE, WebRTC voice/video calls, and ultra-lightweight native apps (~45 MB RAM, ~6 MB installer) for Windows, macOS, Linux, Android and iOS.
+
+## Key Pages
+
+- [QxChat — Private, Self-Hosted Messaging](https://getqxchat.com/) — Product overview, features, performance benchmarks and community.
+- [Download QxChat](https://getqxchat.com/download) — Native clients: Windows (.msi), macOS (.dmg), Linux (AppImage/.deb/.rpm), Android (.apk), iOS (.ipa), NixOS (flake).
+- [QxChat Handbook & Documentation](https://getqxchat.com/wiki) — Philosophy, zero-logs E2EE architecture, self-hosting model and protocol reference.
+
+## Resources
+
+- [GitHub organization (lqxp)](https://github.com/lqxp) — All source code: app, client, server core, site. Bug reports and contributions via Issues and Pull Requests.
+- [Discord community](https://discord.wf/qxchat) — Official community chat and support.
+- [Web client](https://qxch.at/app) — Hosted web version of QxChat.
+- [Default in-app room](https://qxch.at/app) — Open the web client or any native app to join the default QxChat room and talk to the team directly.
+
+## Contact & Support
+
+- Email: contact@qxch.at — General contact, press, partnerships.
+- Support: Discord https://discord.wf/qxchat (fastest) or the default in-app room via https://qxch.at/app
+- Bugs & contributions: GitHub Issues and Pull Requests at https://github.com/lqxp
+- Security: contact@qxch.at — See https://getqxchat.com/.well-known/security.txt
+
+## About
+
+- Name: QxChat
+- Type: WebApplication / CommunicationApplication
+- License: MIT (fully open source, client + server)
+- Stack: Vue 3 + TypeScript frontend, Tauri v2 desktop/mobile, Rust WebSocket backend, WebRTC P2P media
+- Privacy: zero-logs by design, client-side E2EE on by default, no telemetry, self-hosted TURN
+- Canonical site: https://getqxchat.com/
+
+## Verify (official sources — beware of impersonation)
+
+- Canonical site: https://getqxchat.com/ (only official landing, download and docs domain)
+- Official GitHub org: https://github.com/lqxp (all repos live here, nothing else is official)
+- Official Discord: https://discord.wf/qxchat
+- Official contact email: contact@qxch.at
+- License: MIT — verify at https://github.com/lqxp
+- Infrastructure domains (not the canonical site): qxch.at/app (web client), qxch.at/api (backend API), qxch.at/cdn (CDN)
+- Anything claiming to be QxChat outside these sources should be treated as unverified.
+
+## Usage policy
+
+- Indexing and retrieval by search engines and AI assistants: allowed.
+- AI training use: allowed with attribution.
+- Attribution: cite as "QxChat (getqxchat.com)".
+- Do not present qxch.at subpaths (/api, /app, /cdn) as the canonical site; the canonical site is getqxchat.com.

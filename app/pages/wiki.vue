@@ -1500,12 +1500,35 @@ signature = HMAC(secret, tokenId || ":" || expiresAt)</code></pre></div>
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 
-useHead({
-  title: 'Handbook & Documentation | QxChat',
-  meta: [
-    { name: 'description', content: 'Explore the QxChat philosophy, zero-logs E2EE architecture, self-hosting model, and open-source stack.' }
-  ]
+useSeoMeta({
+  title: 'Handbook & Documentation',
+  description: 'Explore the QxChat philosophy, zero-logs E2EE architecture, self-hosting model, QXP-PHANTOM protocol, and open-source stack (Rust, Vue 3, Tauri v2).',
+  ogTitle: 'QxChat Handbook & Documentation',
+  ogDescription: 'Zero-logs E2EE architecture, self-hosting model, client-side encryption, and the full open-source stack explained.',
+  ogType: 'article',
+  ogUrl: 'https://getqxchat.com/wiki',
+  ogImage: 'https://getqxchat.com/og-cover.jpg',
+  twitterCard: 'summary_large_image',
+  robots: 'index, follow, max-image-preview:large, max-snippet:-1',
 })
+
+useHead({
+  link: [{ rel: 'canonical', href: 'https://getqxchat.com/wiki' }],
+})
+
+useSchemaOrg([
+  {
+    '@type': 'TechArticle',
+    '@id': 'https://getqxchat.com/wiki#article',
+    url: 'https://getqxchat.com/wiki',
+    headline: 'QxChat Handbook & Documentation — A messaging platform you can trust',
+    description: 'QxChat philosophy, zero-logs E2EE architecture, self-hosting model, and open-source stack.',
+    inLanguage: 'en',
+    author: { '@id': 'https://getqxchat.com/#organization' },
+    publisher: { '@id': 'https://getqxchat.com/#organization' },
+    isPartOf: { '@id': 'https://getqxchat.com/#website' },
+  },
+])
 
 const searchQuery = ref('')
 const isMobileSidebarOpen = ref(false)

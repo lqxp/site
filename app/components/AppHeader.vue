@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar" :class="{ 'nav-hidden': isHidden }">
     <div class="nav-content">
-      <NuxtLink to="/" class="logo">
+      <NuxtLink to="/" class="logo" aria-label="QxChat — home">
         <img src="/app-icon-with-name.svg" alt="QxChat Logo" class="brand-logo-img" />
       </NuxtLink>
 

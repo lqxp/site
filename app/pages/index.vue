@@ -564,12 +564,44 @@ import iconMacos from '~/assets/svgs/macos.svg?raw'
 import iconLinux from '~/assets/svgs/linux.svg?raw'
 import iconAndroid from '~/assets/svgs/android.svg?raw'
 
-useHead({
-  title: 'QxChat | Private, Self-Hosted & Multi-Platform Messaging',
-  meta: [
-    { name: 'description', content: 'QxChat is an open-source, end-to-end encrypted messaging platform you host on your own server. Available on Windows, macOS, Linux, Android and iOS.' }
-  ]
+useSeoMeta({
+  title: 'Private, Self-Hosted & Multi-Platform Messaging',
+  description: 'QxChat is an open-source, end-to-end encrypted messaging platform you host on your own server. Available on Windows, macOS, Linux, Android and iOS.',
+  ogTitle: 'QxChat — Your server. Your rules.',
+  ogDescription: 'Private rooms, client-side E2EE encryption, and seamless voice & video calls. Ultra-lightweight native apps (~45 MB RAM, ~6 MB installer).',
+  ogType: 'website',
+  ogUrl: 'https://getqxchat.com/',
+  ogImage: 'https://getqxchat.com/og-cover.jpg',
+  twitterCard: 'summary_large_image',
+  robots: 'index, follow, max-image-preview:large, max-snippet:-1',
 })
+
+useHead({
+  link: [{ rel: 'canonical', href: 'https://getqxchat.com/' }],
+})
+
+useSchemaOrg([
+  {
+    '@type': 'WebPage',
+    '@id': 'https://getqxchat.com/#webpage',
+    url: 'https://getqxchat.com/',
+    name: 'QxChat | Private, Self-Hosted & Multi-Platform Messaging',
+    isPartOf: { '@id': 'https://getqxchat.com/#website' },
+    inLanguage: 'en',
+    description: 'Private rooms, client-side E2EE encryption, and seamless voice & video calls on your own infrastructure.',
+  },
+  {
+    '@type': 'SoftwareApplication',
+    name: 'QxChat',
+    url: 'https://getqxchat.com/',
+    description: 'Open-source, end-to-end encrypted messaging platform you host on your own server. Native Tauri v2 apps for desktop and mobile.',
+    applicationCategory: 'CommunicationApplication',
+    operatingSystem: ['Windows', 'macOS', 'Linux', 'Android', 'iOS'],
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    license: 'https://opensource.org/licenses/MIT',
+    downloadUrl: 'https://getqxchat.com/download',
+  },
+])
 
 const benchSectionRef = ref<HTMLElement | null>(null)
 const isBenchVisible = ref(false)

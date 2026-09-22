@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@nuxtjs/seo": "^5.3.16",
     "@studio-freight/lenis": "^1.0.42",
     "gsap": "^3.15.0",
     "nuxt": "^4.4.8",

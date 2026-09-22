@@ -401,12 +401,43 @@ import iconAndroid from '~/assets/svgs/android.svg?raw'
 import iconIos from '~/assets/svgs/ios.svg?raw'
 import iconNixos from '~/assets/svgs/nixos.svg?raw'
 
-useHead({
-  title: 'Download QxChat | Windows, macOS, Linux, Android, iOS, NixOS',
-  meta: [
-    { name: 'description', content: 'Download lightweight, native QxChat client apps for Windows, macOS, Linux, Android, iOS, and NixOS. Fast, secure, zero telemetry.' }
-  ]
+useSeoMeta({
+  title: 'Download for Windows, macOS, Linux, Android, iOS & NixOS',
+  description: 'Download lightweight, native QxChat client apps for Windows, macOS, Linux, Android, iOS, and NixOS. ~6 MB installer, zero telemetry, client-side E2EE.',
+  ogTitle: 'Download QxChat — Windows, macOS, Linux, Android, iOS',
+  ogDescription: 'Ultra-lightweight native clients powered by Tauri v2 and Rust. Instant startup, minimal RAM usage, zero telemetry.',
+  ogType: 'website',
+  ogUrl: 'https://getqxchat.com/download',
+  ogImage: 'https://getqxchat.com/og-cover.jpg',
+  twitterCard: 'summary_large_image',
+  robots: 'index, follow, max-image-preview:large, max-snippet:-1',
 })
+
+useHead({
+  link: [{ rel: 'canonical', href: 'https://getqxchat.com/download' }],
+})
+
+useSchemaOrg([
+  {
+    '@type': 'WebPage',
+    '@id': 'https://getqxchat.com/download#webpage',
+    url: 'https://getqxchat.com/download',
+    name: 'Download QxChat | Windows, macOS, Linux, Android, iOS, NixOS',
+    isPartOf: { '@id': 'https://getqxchat.com/#website' },
+    inLanguage: 'en',
+    description: 'Download lightweight, native QxChat client apps for Windows, macOS, Linux, Android, iOS, and NixOS.',
+  },
+  {
+    '@type': 'SoftwareApplication',
+    name: 'QxChat',
+    url: 'https://getqxchat.com/download',
+    description: 'Native QxChat client downloads for Windows (.msi), macOS (.dmg), Linux (AppImage/.deb/.rpm), Android (.apk), iOS (.ipa) and NixOS (flake).',
+    applicationCategory: 'CommunicationApplication',
+    operatingSystem: ['Windows', 'macOS', 'Linux', 'Android', 'iOS', 'NixOS'],
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    license: 'https://opensource.org/licenses/MIT',
+  },
+])
 
 const winArch = ref<'x64' | 'arm64'>('x64')
 const winArchOpen = ref(false)

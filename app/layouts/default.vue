@@ -8,6 +8,32 @@
   </div>
 </template>
 
+<script setup lang="ts">
+// Global structured data (Organization + WebSite) emitted on every page.
+useSchemaOrg([
+  {
+    '@type': 'Organization',
+    '@id': 'https://getqxchat.com/#organization',
+    name: 'QxChat',
+    url: 'https://getqxchat.com/',
+    logo: 'https://getqxchat.com/app-icon.svg',
+    sameAs: [
+      'https://github.com/lqxp',
+      'https://discord.wf/qxchat',
+    ],
+  },
+  {
+    '@type': 'WebSite',
+    '@id': 'https://getqxchat.com/#website',
+    url: 'https://getqxchat.com/',
+    name: 'QxChat',
+    inLanguage: 'en',
+    description: 'QxChat is an open-source, end-to-end encrypted messaging platform you host on your own server.',
+    publisher: { '@id': 'https://getqxchat.com/#organization' },
+  },
+])
+</script>
+
 <style>
 @import '~/assets/css/fonts.css';
 

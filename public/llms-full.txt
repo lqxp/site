@@ -1,0 +1,48 @@
+# QxChat — Full Reference (llms-full.txt)
+
+> QxChat is an open-source (MIT), end-to-end encrypted messaging platform you host on your own server. Canonical site: https://getqxchat.com/
+
+## What is QxChat?
+
+QxChat is built on the belief that communication tools should be transparent, self-hosted, and free from centralized telemetry. You host the server, you own the keys: every room generates its own encryption key on-device, messages are encrypted before leaving the client, and the server only routes ciphertext it mathematically cannot read. Voice and video stream via your own TURN server using WebRTC P2P. No analytics, no telemetry — just a WebSocket connection between you and a server you control.
+
+## Key facts
+
+- License: MIT, 100% open source (client, server, everything). No "open core".
+- E2EE: client-side, on by default. Per-room keys, device signing keys (ECDSA P-256), post-quantum hybrid signatures (ML-DSA-65) and key encapsulation (ML-KEM-768) via the QXP-PHANTOM friend protocol.
+- Performance: ~45 MB RAM idle (vs ~600 MB Discord), ~6 MB installer (vs ~140 MB Discord), ~0.3s cold start. No bundled Chromium (Tauri v2 + system WebView).
+- Platforms: Windows (.msi, x64/ARM64), macOS (.dmg, Apple Silicon/Intel), Linux (AppImage/.deb/.rpm, x64/ARM64), Android (.apk), iOS (unsigned .ipa via sideload), NixOS (flake), plus web client at https://qxch.at/app
+- Stack: Vue 3 + TypeScript (lqxp framework), Tauri v2, Rust WebSocket core (qxprotocol), WebRTC P2P media.
+- Storage: messages in RAM only (150/room cap, lost on restart); SQLite/PostgreSQL for accounts and room metadata.
+- Auth: password + 12-word BIP39 recovery phrase, Argon2id hashing, 7-day session tokens (SHA-256 stored).
+- Source: https://github.com/lqxp — Community: https://discord.wf/qxchat — Email: contact@qxch.at
+
+## Contact & Support
+
+- Email: contact@qxch.at (general, press, partnerships, security).
+- Fastest support: Discord https://discord.wf/qxchat or the default in-app room (open https://qxch.at/app or any native app).
+- Bugs & contributions: GitHub Issues and Pull Requests at https://github.com/lqxp.
+- Security policy: https://getqxchat.com/.well-known/security.txt
+
+## Verify (official sources — beware of impersonation)
+
+- Canonical site: https://getqxchat.com/ — the only official landing/download/docs domain.
+- Official GitHub org: https://github.com/lqxp — all official repos live here.
+- Official Discord: https://discord.wf/qxchat. Official email: contact@qxch.at.
+- License: MIT. Infrastructure (not canonical content): qxch.at/app, qxch.at/api, qxch.at/cdn.
+
+## Pages
+
+- Home: https://getqxchat.com/ — overview, mobile showcase, client features, benchmarks, contributors.
+- Download: https://getqxchat.com/download — all native clients with OS/arch detection.
+- Handbook: https://getqxchat.com/wiki — Why QxChat exists; How it works; The technology; Open source; Architecture; Account Authentication; Client Signature Protocol; Message Transport; QXP-PHANTOM Protocol; Cryptographic Primitives; Anti-Abuse; Changelog.
+
+## Comparisons (as stated on getqxchat.com, Windows 11 idle, 5 encrypted rooms)
+
+- RAM: QxChat ~45 MB vs Element ~300 MB vs Slack ~500 MB vs Discord ~600 MB.
+- Installer: QxChat ~6 MB vs Discord 139 MB vs Slack 146 MB vs Element 183 MB.
+- Cold launch: QxChat ~0.3s vs Element ~2.8s vs Discord ~3.5s vs Slack ~4.2s.
+
+## Attribution
+
+Cite as "QxChat (getqxchat.com)". Canonical URLs use https://getqxchat.com/. The qxch.at domain hosts infrastructure (api, app, cdn), not the canonical site content.
