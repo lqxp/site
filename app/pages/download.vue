@@ -389,6 +389,36 @@
       </div>
     </section>
 
+    <!-- Backend-down popup: no hardcoded fallback versions.
+         Shown when qxch.at is unreachable. -->
+    <div v-if="showReleaseErrorPopup" class="release-error-overlay" role="alertdialog" aria-modal="true" aria-labelledby="release-error-title">
+      <div class="release-error-modal">
+        <button type="button" class="release-error-close" @click="dismissReleaseError" aria-label="Dismiss">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+        <h2 id="release-error-title" class="release-error-title">Downloads temporarily unavailable</h2>
+        <p class="release-error-text">
+          We couldn't reach the QxChat backend (qxch.at) to fetch the latest
+          versions, so download links are disabled right now instead of
+          pointing at outdated files.
+        </p>
+        <div class="release-error-actions">
+          <a href="https://github.com/lqxp/app/releases" target="_blank" rel="noopener" class="release-error-github-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path>
+            </svg>
+            <span>Get releases on GitHub</span>
+          </a>
+          <button type="button" class="release-error-retry-btn" @click="retryLoadRelease">
+            <span>Retry</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -447,24 +477,88 @@ const linuxArch = ref<'x64' | 'arm64'>('x64')
 const linuxArchOpen = ref(false)
 const linuxFormat = ref<'AppImage' | 'deb' | 'rpm'>('AppImage')
 
-interface ReleaseAsset {
+// Release metadata comes from the QxChat backend, fetched client-side
+// so the statically generated site never serves a frozen version.
+// Single source of truth: https://qxch.at/api/download (binaries catalogue).
+// No Nuxt backend, no api.github.com calls, no hardcoded github.com URLs.
+const QXCHAT_API_URL = 'https://qxch.at/api/download'
+
+interface ApiEntry {
   name: string
-  browser_download_url: string
+  url?: string
+  browser_download_url?: string
   size?: number
 }
 
-interface ReleaseData {
-  tag_name: string
-  published_at: string
-  assets: ReleaseAsset[]
-  downloads?: {
-    windows?: { x64?: string; arm64?: string }
-    macos?: { arm64?: string; x64?: string }
-    linux?: { appimage_x64?: string; appimage_arm64?: string }
-    android?: string
-    ios?: string
-    nixos?: string
+const releaseEntries = ref<ApiEntry[]>([])
+const releaseTag = ref('')
+const releaseLoaded = ref(false)
+const releaseFailed = ref(false)
+
+function normalizeReleasePayload(res: any): { tag: string; entries: ApiEntry[] } {
+  if (!res || typeof res !== 'object') return { tag: '', entries: [] }
+  const entries: ApiEntry[] = Array.isArray(res.binaries) && res.binaries.length > 0
+    ? res.binaries
+    : Array.isArray(res.latestBinaries) && res.latestBinaries.length > 0
+      ? res.latestBinaries
+      : Array.isArray(res.assets)
+        ? res.assets
+        : []
+  const tag: string =
+    typeof res.tag === 'string' && res.tag
+      ? res.tag
+      : typeof res.tag_name === 'string' && res.tag_name
+        ? res.tag_name
+        : typeof res.version === 'string' && res.version
+          ? `v${res.version}`
+          : typeof res?.release?.tag === 'string' && res.release.tag
+            ? res.release.tag
+            : typeof res?.latestRelease?.tag === 'string' && res.latestRelease.tag
+              ? res.latestRelease.tag
+              : ''
+  return { tag, entries }
+}
+
+async function loadRelease() {
+  releaseFailed.value = false
+  try {
+    const res = await $fetch<any>(QXCHAT_API_URL)
+    const { tag, entries } = normalizeReleasePayload(res)
+    const usable = entries.filter(
+      e => e && typeof e.name === 'string' && (e.url || e.browser_download_url)
+    )
+    if (usable.length > 0) {
+      releaseEntries.value = usable
+      releaseTag.value = tag
+      releaseLoaded.value = true
+      return
+    }
+  } catch {
+    // Backend unreachable => error popup (no hardcoded fallback versions).
   }
+  releaseFailed.value = true
+}
+
+onMounted(() => {
+  loadRelease()
+})
+
+// Compat object for the template (title only).
+const releaseData = computed(() => (releaseTag.value ? { tag_name: releaseTag.value } : null))
+
+const isReleaseLoading = computed(() => !releaseLoaded.value && !releaseFailed.value)
+
+// Error popup state (backend down => no hardcoded fallback versions).
+const releaseErrorDismissed = ref(false)
+const showReleaseErrorPopup = computed(() => releaseFailed.value && !releaseErrorDismissed.value)
+
+function dismissReleaseError() {
+  releaseErrorDismissed.value = true
+}
+
+function retryLoadRelease() {
+  releaseErrorDismissed.value = false
+  loadRelease()
 }
 
 const formatBytes = (bytes?: number) => {
@@ -476,14 +570,6 @@ const formatBytes = (bytes?: number) => {
   if (mb < 1024) return `${mb.toFixed(1)} MB`
   return `${(mb / 1024).toFixed(2)} GB`
 }
-
-// Fetch via the backend release API (cached, avoids GitHub rate-limits)
-// so the split macOS binaries (ARM64 / Intel) resolve consistently.
-// No hardcoded default version: while the API hasn't responded yet,
-// asset links fall back to '#' and buttons show a loading state.
-const { data: releaseData, pending: releasePending } = await useFetch<ReleaseData>('/api/release')
-
-const isReleaseLoading = computed(() => releasePending.value || !releaseData.value?.tag_name)
 
 const loadingAsset = {
   name: 'Loading…',
@@ -555,218 +641,120 @@ const detectedOSIcon = computed(() => {
   }
 })
 
-// Asset Resolver
-const resolveAsset = (
-  matcher: (name: string) => boolean,
-  defaultName: string,
-  defaultUrl: string,
-  defaultSize?: number
-) => {
-  const asset = releaseData.value?.assets?.find(a => matcher(a.name.toLowerCase()))
-  if (asset) {
-    return {
-      name: asset.name,
-      url: asset.browser_download_url,
-      size: asset.size,
-      sizeStr: formatBytes(asset.size)
-    }
-  }
+// Asset resolver: searches the qxch.at catalogue only.
+// No match (or catalogue not loaded yet) => placeholder link '#'
+// with buttons disabled via .is-loading-release. No GitHub fallback URLs.
+const findEntry = (matcher: (name: string) => boolean) =>
+  releaseEntries.value.find(a => typeof a.name === 'string' && matcher(a.name.toLowerCase()))
+
+const toAsset = (entry: ApiEntry | undefined) => {
+  if (!entry) return loadingAsset
+  const url = entry.url || entry.browser_download_url || '#'
   return {
-    name: defaultName,
-    url: defaultUrl,
-    size: defaultSize,
-    sizeStr: formatBytes(defaultSize)
+    name: entry.name,
+    url,
+    size: entry.size,
+    sizeStr: formatBytes(entry.size)
   }
 }
 
+const resolveAsset = (matcher: (name: string) => boolean) => toAsset(findEntry(matcher))
+
 // Windows Asset
 const winAsset = computed(() => {
-  const isArm = winArch.value === 'arm64'
-  const tag = releaseData.value?.tag_name
-  if (!tag) return loadingAsset
-  const ver = tag.replace(/^v/, '')
-  const base = `https://github.com/lqxp/app/releases/download/${tag}`
-
-  if (isArm) {
+  if (!releaseLoaded.value) return loadingAsset
+  if (winArch.value === 'arm64') {
     return resolveAsset(
-      n => (n.includes('arm64') || n.includes('aarch64')) && n.endsWith('.msi'),
-      `QxChat_${ver}_arm64_en-US.msi`,
-      `${base}/QxChat_${ver}_arm64_en-US.msi`,
-      11324620
+      n => (n.includes('arm64') || n.includes('aarch64')) && n.endsWith('.msi')
     )
   }
   return resolveAsset(
-    n => (n.includes('x64') || n.includes('x86_64') || n.includes('win')) && !n.includes('arm64') && !n.includes('aarch64') && n.endsWith('.msi'),
-    `QxChat_${ver}_x64_en-US.msi`,
-    `${base}/QxChat_${ver}_x64_en-US.msi`,
-    11639193
+    n => (n.includes('x64') || n.includes('x86_64') || n.includes('win')) && !n.includes('arm64') && !n.includes('aarch64') && n.endsWith('.msi')
   )
 })
 
 // macOS Asset (split binaries: Apple Silicon ARM64 vs Intel x64)
 const macAsset = computed(() => {
-  const tag = releaseData.value?.tag_name
-  if (!tag) return loadingAsset
-  const ver = tag.replace(/^v/, '')
-  const base = `https://github.com/lqxp/app/releases/download/${tag}`
-  const assets = releaseData.value?.assets ?? []
-  const byName = (matcher: (n: string) => boolean) =>
-    assets.find(a => matcher(a.name.toLowerCase()))
-  const backendUrl = macArch.value === 'arm64'
-    ? releaseData.value?.downloads?.macos?.arm64
-    : releaseData.value?.downloads?.macos?.x64
-
-  const fallbackName = macArch.value === 'arm64'
-    ? `QxChat_${ver}_aarch64.dmg`
-    : `QxChat_${ver}_x64.dmg`
-  const fallbackSize = macArch.value === 'arm64' ? 19722525 : 19987034
+  if (!releaseLoaded.value) return loadingAsset
 
   if (macArch.value === 'arm64') {
-    const asset = byName(n =>
-      n.endsWith('.dmg') &&
-      (n.includes('aarch64') || n.includes('arm64') || n.includes('apple-silicon'))
-    ) ?? byName(n =>
-      // Backwards compat with older universal builds
-      n.endsWith('.dmg') && (n.includes('universal') || (n.includes('mac') || n.includes('darwin')))
+    return toAsset(
+      findEntry(n =>
+        n.endsWith('.dmg') &&
+        (n.includes('aarch64') || n.includes('arm64') || n.includes('apple-silicon'))
+      ) ?? findEntry(n =>
+        // Backwards compat with older universal builds
+        n.endsWith('.dmg') && (n.includes('universal') || n.includes('mac') || n.includes('darwin'))
+      )
     )
-    if (asset) {
-      return { name: asset.name, url: asset.browser_download_url, size: asset.size, sizeStr: formatBytes(asset.size) }
-    }
-    if (backendUrl) {
-      return { name: fallbackName, url: backendUrl, size: fallbackSize, sizeStr: formatBytes(fallbackSize) }
-    }
-    return {
-      name: fallbackName,
-      url: `${base}/${fallbackName}`,
-      size: fallbackSize,
-      sizeStr: formatBytes(fallbackSize)
-    }
   }
 
-  const asset = byName(n =>
-    n.endsWith('.dmg') &&
-    !n.includes('aarch64') && !n.includes('arm64') && !n.includes('apple-silicon') &&
-    (n.includes('x64') || n.includes('x86_64') || n.includes('intel'))
-  ) ?? byName(n =>
-    // Backwards compat with older universal builds
-    n.endsWith('.dmg') && (n.includes('universal') || (n.includes('mac') || n.includes('darwin')))
+  return toAsset(
+    findEntry(n =>
+      n.endsWith('.dmg') &&
+      !n.includes('aarch64') && !n.includes('arm64') && !n.includes('apple-silicon') &&
+      (n.includes('x64') || n.includes('x86_64') || n.includes('intel'))
+    ) ?? findEntry(n =>
+      // Backwards compat with older universal builds
+      n.endsWith('.dmg') && (n.includes('universal') || n.includes('mac') || n.includes('darwin'))
+    )
   )
-  if (asset) {
-    return { name: asset.name, url: asset.browser_download_url, size: asset.size, sizeStr: formatBytes(asset.size) }
-  }
-  if (backendUrl) {
-    return { name: fallbackName, url: backendUrl, size: fallbackSize, sizeStr: formatBytes(fallbackSize) }
-  }
-  return {
-    name: fallbackName,
-    url: `${base}/${fallbackName}`,
-    size: fallbackSize,
-    sizeStr: formatBytes(fallbackSize)
-  }
 })
 
 // Linux Asset
 const linuxAsset = computed(() => {
+  if (!releaseLoaded.value) return loadingAsset
   const isArm = linuxArch.value === 'arm64'
-  const tag = releaseData.value?.tag_name
-  if (!tag) return loadingAsset
-  const ver = tag.replace(/^v/, '')
-  const base = `https://github.com/lqxp/app/releases/download/${tag}`
 
   if (linuxFormat.value === 'deb') {
     if (isArm) {
       return resolveAsset(
-        n => (n.includes('arm64') || n.includes('aarch64')) && n.endsWith('.deb'),
-        `QxChat_${ver}_arm64.deb`,
-        `${base}/QxChat_${ver}_arm64.deb`,
-        14470348
+        n => (n.includes('arm64') || n.includes('aarch64')) && n.endsWith('.deb')
       )
     }
     return resolveAsset(
-      n => (n.includes('amd64') || n.includes('x86_64') || n.includes('x64')) && !n.includes('arm64') && !n.includes('aarch64') && n.endsWith('.deb'),
-      `QxChat_${ver}_amd64.deb`,
-      `${base}/QxChat_${ver}_amd64.deb`,
-      14365491
+      n => (n.includes('amd64') || n.includes('x86_64') || n.includes('x64')) && !n.includes('arm64') && !n.includes('aarch64') && n.endsWith('.deb')
     )
   }
 
   if (linuxFormat.value === 'rpm') {
     if (isArm) {
       return resolveAsset(
-        n => (n.includes('aarch64') || n.includes('arm64')) && n.endsWith('.rpm'),
-        `QxChat-${ver}-1.aarch64.rpm`,
-        `${base}/QxChat-${ver}-1.aarch64.rpm`,
-        14470348
+        n => (n.includes('aarch64') || n.includes('arm64')) && n.endsWith('.rpm')
       )
     }
     return resolveAsset(
-      n => (n.includes('x86_64') || n.includes('x64') || n.includes('amd64')) && !n.includes('aarch64') && !n.includes('arm64') && n.endsWith('.rpm'),
-      `QxChat-${ver}-1.x86_64.rpm`,
-      `${base}/QxChat-${ver}-1.x86_64.rpm`,
-      14365491
+      n => (n.includes('x86_64') || n.includes('x64') || n.includes('amd64')) && !n.includes('aarch64') && !n.includes('arm64') && n.endsWith('.rpm')
     )
   }
 
   // AppImage
   if (isArm) {
     return resolveAsset(
-      n => (n.includes('aarch64') || n.includes('arm64')) && n.endsWith('.appimage'),
-      `QxChat_${ver}_aarch64.AppImage`,
-      `${base}/QxChat_${ver}_aarch64.AppImage`,
-      86822092
+      n => (n.includes('aarch64') || n.includes('arm64')) && n.endsWith('.appimage')
     )
   }
   return resolveAsset(
-    n => (n.includes('amd64') || n.includes('x86_64') || n.includes('x64')) && !n.includes('aarch64') && !n.includes('arm64') && n.endsWith('.appimage'),
-    `QxChat_${ver}_amd64.AppImage`,
-    `${base}/QxChat_${ver}_amd64.AppImage`,
-    91542323
+    n => (n.includes('amd64') || n.includes('x86_64') || n.includes('x64')) && !n.includes('aarch64') && !n.includes('arm64') && n.endsWith('.appimage')
   )
 })
 
 // Android Asset
 const androidAsset = computed(() => {
-  const tag = releaseData.value?.tag_name
-  if (!tag) return loadingAsset
-  const ver = tag.replace(/^v/, '')
-  const base = `https://github.com/lqxp/app/releases/download/${tag}`
-
-  return resolveAsset(
-    n => n.endsWith('.apk'),
-    `QxChat_${ver}_aarch64.apk`,
-    `${base}/QxChat_${ver}_aarch64.apk`,
-    22963814
-  )
+  if (!releaseLoaded.value) return loadingAsset
+  return resolveAsset(n => n.endsWith('.apk'))
 })
 
 // iOS Asset
 const iosAsset = computed(() => {
-  const tag = releaseData.value?.tag_name
-  if (!tag) return loadingAsset
-  const ver = tag.replace(/^v/, '')
-  const base = `https://github.com/lqxp/app/releases/download/${tag}`
-
-  return resolveAsset(
-    n => n.endsWith('.ipa'),
-    `QxChat_${ver}_unsigned.ipa`,
-    `${base}/QxChat_${ver}_unsigned.ipa`,
-    9154232
-  )
+  if (!releaseLoaded.value) return loadingAsset
+  return resolveAsset(n => n.endsWith('.ipa'))
 })
 
 // NixOS Asset
 const nixosAsset = computed(() => {
-  const tag = releaseData.value?.tag_name
-  if (!tag) return loadingAsset
-  const ver = tag.replace(/^v/, '')
-  const base = `https://github.com/lqxp/app/releases/download/${tag}`
-
-  return resolveAsset(
-    n => n.includes('flake') && n.endsWith('.nix'),
-    `QxChat_${ver}_flake.nix`,
-    `${base}/QxChat_${ver}_flake.nix`,
-    1525
-  )
+  if (!releaseLoaded.value) return loadingAsset
+  return resolveAsset(n => n.includes('flake') && n.endsWith('.nix'))
 })
 
 const primaryAsset = computed(() => {
@@ -1310,6 +1298,115 @@ const primaryDownloadUrl = computed(() => primaryAsset.value.url)
   color: var(--text-secondary);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
   text-align: center;
+}
+
+.release-error-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+}
+
+.release-error-modal {
+  position: relative;
+  max-width: 480px;
+  width: 100%;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 2.2rem 2rem 2rem;
+  text-align: center;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+}
+
+.release-error-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.release-error-close:hover {
+  background: var(--surface-raised);
+  color: var(--text-color);
+}
+
+.release-error-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-color);
+  margin: 0 0 0.75rem;
+}
+
+.release-error-text {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: var(--text-secondary);
+  margin: 0 0 1.75rem;
+}
+
+.release-error-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.release-error-github-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--accent-color);
+  color: #ffffff;
+  height: 50px;
+  padding: 0 1.5rem;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 0.25s ease;
+}
+
+.release-error-github-btn:hover {
+  background: var(--text-color);
+  color: var(--bg-secondary);
+}
+
+.release-error-retry-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  height: 46px;
+  padding: 0 1.5rem;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.release-error-retry-btn:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
 }
 
 @media (max-width: 960px) {

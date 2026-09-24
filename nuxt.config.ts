@@ -117,14 +117,7 @@ export default defineNuxtConfig({
 
   nitro: {
     prerender: {
-      ignore: ["/app", "/api/release"],
+      ignore: ["/app"],
     },
-  },
-  routeRules: {
-    // Cause racine du bug "1.20.4 affiché alors que 1.20.5 existe" :
-    // `nuxt generate` pré-rendait /api/release en JSON statique gelé
-    // au moment du build (update.sh ne déploie que .output/public/).
-    // On interdit le pré-rendu de l'API pour toujours servir du frais.
-    "/api/release": { prerender: false, cache: { maxAge: 60 * 5, swr: true } },
   },
 });
