@@ -666,6 +666,8 @@
                       <tr><td>52</td><td>Unmute member</td><td>Client to server</td></tr>
                       <tr><td>60</td><td>Sync envelope (QxCloudSync)</td><td>Client to server</td></tr>
                       <tr><td>61</td><td>Sync fan-out (QxCloudSync)</td><td>Server to client</td></tr>
+                      <tr><td>62</td><td>Sync peer directory (QxCloudSync)</td><td>Client to server</td></tr>
+                      <tr><td>63</td><td>Sync peer presence (QxCloudSync)</td><td>Server to client</td></tr>
                       <tr><td>98</td><td>Update voice chat state</td><td>Both</td></tr>
                       <tr><td>100</td><td>Update mute state</td><td>Client to server</td></tr>
                       <tr><td>101</td><td>Admin status</td><td>Client to server</td></tr>
@@ -1265,16 +1267,38 @@
                 <p>Server to siblings (opcode 61, forwarded as-is):</p>
                 <div class="doc-code-block"><pre><code>{ "op": 61, "d": { "fromClientId": "...",
   "toClientId": "...", "encrypted": { "...opaque..." } } }</code></pre></div>
-                <p>Server to sender, only when <code>requestId</code> is present (relay ack, not peer ack):</p>
-                <div class="doc-code-block"><pre><code>{ "op": 60, "d": { "ok": true, "requestId": "..." } }</code></pre></div>
+                <p>Server to sender, only when <code>requestId</code> is present (relay ack with delivery report):</p>
+                <div class="doc-code-block"><pre><code>{ "op": 60, "d": { "ok": true, "delivered": 2, "dropped": 0,
+  "peers": ["&lt;clientId&gt;", ...], "peerCount": 3, "requestId": "..." } }</code></pre></div>
+                <p>
+                  <code>delivered</code> counts the sibling queues that accepted the frame, <code>dropped</code> those
+                  whose queue was full (512) or gone — never silent anymore. <code>peers</code> lists the
+                  <code>clientId</code>s that received it, <code>peerCount</code> the total sibling sessions for this
+                  <code>user_id</code>. The op 61 wire format is unchanged, so older clients keep decrypting and simply
+                  ignore the extra ack fields.
+                </p>
+                <p>Presence directory, client to server (opcode 62) — same-<code>user_id</code> siblings only, sorted by <code>clientId</code>:</p>
+                <div class="doc-code-block"><pre><code>{ "op": 62, "d": { "requestId?" } } →
+{ "op": 62, "d": { "ok": true, "self": "&lt;own clientId&gt;",
+  "peers": [{ "clientId": "...", "platform": "web|mobile|desktop" }] } }</code></pre></div>
+                <p>Presence events, server to siblings (opcode 63, best-effort, ignored by older clients):</p>
+                <div class="doc-code-block"><pre><code>{ "op": 63, "d": { "event": "join|update|leave",
+  "clientId": "...", "platform": "..." } }</code></pre></div>
                 <p>The handler is <code>relay_cloud_sync_op</code> (<code>websocket/protocol.rs</code>), modelled on <code>relay_room_signal</code> (op 55 → 56):</p>
                 <ul class="doc-bullets">
-                  <li>Rate limit <code>cloud_sync:session:&lt;sid&gt;</code> 30 per 10 seconds. The global WebSocket guard (1200 per 60 seconds) also applies.</li>
+                  <li>Rate limit <code>cloud_sync:session:&lt;sid&gt;</code> <strong>120 per 10 seconds</strong> (raised from 30: a full mesh needs N(N−1)/2 handshakes plus chunked snapshot floods on join, which choked meshes of 3–4+ devices mid-handshake so they never converged). Directory <code>sync_peers:session:&lt;sid&gt;</code> 15 per 10 seconds. The global WebSocket guard (1200 per 60 seconds) still caps sustained abuse.</li>
                   <li><code>d.encrypted</code> must be a JSON object with a serialized length of at most 64 KiB (<code>MAX_CLOUD_SYNC_BYTES</code>), else <code>"Payload too large"</code>.</li>
-                  <li>The sender must be identified (<code>user_id</code> plus <code>username</code> non-empty; session revalidation is already enforced by dispatch).</li>
-                  <li>Fan-out targets <code>players</code> with the same <code>user_id</code>, a different <code>session_id</code>, and an empty <code>toClientId</code> or a matching <code>client_id</code>. Recipients are collected under the read lock, then <code>try_send</code> after the lock is dropped (lossy if a 512-message queue is full, same as op 55/111).</li>
+                  <li>The sender must be identified (<code>user_id</code> plus <code>username</code> non-empty; session revalidation is already enforced by dispatch) <strong>and carry a non-empty <code>clientId</code></strong>, else <code>"Missing clientId"</code>. Without a return address siblings could only answer by broadcast, turning every handshake into a mesh-wide storm at 3+ devices.</li>
+                  <li>Fan-out targets <code>players</code> with the same <code>user_id</code>, a different <code>session_id</code>, and an empty <code>toClientId</code> or a matching <code>client_id</code>. Recipients are collected under the read lock, then <code>try_send</code> after the lock is dropped; full or closed queues increment <code>dropped</code> instead of vanishing silently (same 512-message queue as op 55/111).</li>
                   <li>No database write, no <code>room_messages</code> push, no dead-drop, no history. Invisible devices are included, unlike room broadcasts.</li>
-                  <li>Stale routing is silent: a <code>toClientId</code> that no longer maps to a connected session reaches zero recipients, yet the sender still gets <code>{ ok: true }</code> (relay ack, not peer ack). The client therefore never trusts the relay ack and heals routing itself (see Mesh self-healing below).</li>
+                  <li>Stale routing is now visible: a <code>toClientId</code> that no longer maps to a connected session yields <code>delivered: 0</code> while <code>peerCount</code> shows the live mesh — the sender falls back to broadcast and refreshes via op 62 immediately instead of stalling. A broadcast with <code>peerCount: 0</code> is the normal single-device case and needs no retry.</li>
+                </ul>
+
+                <h3>Mesh healing contract (3+ devices)</h3>
+                <ul class="doc-bullets">
+                  <li>Unicast frame with <code>delivered == 0</code> means a stale route: resend once with empty <code>toClientId</code>, then re-learn the mesh with op 62. Do not spin — <code>dropped &gt; 0</code> means congested queues, so retry that leg with backoff.</li>
+                  <li>On op 63 <code>join</code> from an unknown <code>clientId</code>, open a handshake to it; on <code>leave</code>, mark that leg's <code>peerWs</code> stale at once instead of pushing into the void; on <code>update</code>, refresh the Settings → Sync icon.</li>
+                  <li>On boot (or after reconnect), fetch op 62: if the mesh is non-empty and no session exists for a listed peer, handshake it directly — do not wait for its hello. This keeps 4–8-device meshes fully interconnected without the manual Pair button.</li>
                 </ul>
 
                 <h3>Trust root and key schedule (client-only)</h3>
@@ -1308,8 +1332,9 @@
                   those two know each other, and it never relays between them — every pair needs its own direct
                   handshake (N devices = N(N−1)/2 handshakes). With sync enabled and the 12 words present, a client
                   holding zero sessions broadcasts a signed hello on boot (jittered 2–6 s); any holder of the same words
-                  verifies the HMAC and answers. Devices that already hold sessions do not auto-hello; the manual Pair
-                  button (or a re-handshake, see below) covers later joins. Duplicate hellos are ignored while the
+                  verifies the HMAC and answers. A client that already holds sessions also handshakes proactively: any
+                  peer learned via the op 62 directory or an op 63 <code>join</code> event without a live session gets a
+                  direct hello — the manual Pair button and re-handshakes (see below) remain as fallback. Duplicate hellos are ignored while the
                   existing session shows recent verified inbound traffic, but answered when that session is stale
                   (reinstall / divergence recovery) — the completed handshake then replaces the old session and its
                   secrets are wiped. Hello is broadcast, accept/confirm/data are unicast via <code>toClientId</code>.
@@ -1324,9 +1349,11 @@
                 <h3>Mesh self-healing (client-only)</h3>
                 <p>
                   The peer routing address (<code>peerWs</code>, the peer's WebSocket <code>client_id</code> used for unicast)
-                  goes stale on every reconnect, tab reload, or phone wake — and the relay drops such frames without telling
-                  the sender. Before healing, a stale leg stalled silently and a rekey lost in a stale route split epochs
-                  permanently (both sides then drop everything).
+                  goes stale on every reconnect, tab reload, or phone wake. The relay now reports this instantly
+                  (<code>delivered: 0</code> on the op 60 ack, plus op 63 <code>leave</code>/<code>join</code> events and the
+                  op 62 directory — see Mesh healing contract above); the mechanisms below remain as the safety net
+                  for older servers and for frames sent without <code>requestId</code>. A rekey lost in
+                  a stale route still splits epochs (both sides then drop everything) — hence the epoch healing below.
                 </p>
                 <ul class="doc-bullets">
                   <li>Each session tracks <code>lastInboundAt</code> (last <em>verified inbound</em> traffic only — the displayed <code>lastSeen</code> is also bumped on send, so it can never detect a one-way black hole).</li>
@@ -1357,7 +1384,7 @@
                   <li><strong>Transcript integrity:</strong> the KDF transcript is hashed over canonical JSON (sorted keys), never <code>JSON.stringify</code> — the server re-serializes in sorted order, so a naive hash would diverge per side.</li>
                   <li><strong>Anti-replay:</strong> per-peer <code>(syncId, epoch)</code> window with monotonic high-water (tolerance 5000 for reordering) plus a bounded dedup set (6000 entries, pruned). Survives restarts via the persisted <code>sendN</code>; last-writer-wins merge makes residual replays harmless.</li>
                   <li><strong>At rest:</strong> without client lock, session blobs are AES-GCM under a syncRoot-derived key (device boundary, same as the stored recovery words). With client lock active, sessions and the SLH-DSA identity rest only under AES-GCM envelopes keyed by the lock key; locking wipes all RAM secrets (masters, epoch keys, syncRoot, SLH cache) and never downgrades envelopes.</li>
-                  <li><strong>Residual (accepted):</strong> hello replay is a bounded nuisance (server rate 30/10 s, 5 recent pendings max, 120 s sweep); the server observes timing, frame counts and approximate sizes (no padding to fixed buckets, unlike PHANTOM); PBKDF2-100k for the master follows the pre-existing PHANTOM parameters.</li>
+                  <li><strong>Residual (accepted):</strong> hello replay is a bounded nuisance (server rate 120/10 s, 5 recent pendings max, 120 s sweep); the server observes timing, frame counts and approximate sizes (no padding to fixed buckets, unlike PHANTOM); PBKDF2-100k for the master follows the pre-existing PHANTOM parameters.</li>
                 </ul>
               </article>
     <article v-if="section === 'protocol-changes'" id="protocol-changes" class="doc-chapter">
