@@ -139,8 +139,8 @@ export const wikiGroups: WikiGroup[] = [
         label: 'QxCloudSync Protocol',
         group: 'TECHNICAL REFERENCE',
         seoTitle: 'QxCloudSync Device Sync — Technical Reference',
-        seoDescription: 'Device-to-device sync over a blind relay: hybrid post-quantum handshake, epoch keys, AES-256-GCM envelopes, and deepMerge rules.',
-        teaser: 'Blind relay sync, hybrid PQ handshake, epoch keys, deepMerge.',
+        seoDescription: 'Device-to-device sync over a blind relay: full-mesh pairing with no transitive trust, hybrid post-quantum handshake, epoch keys, self-healing routes, AES-256-GCM envelopes, and deepMerge rules.',
+        teaser: 'Blind relay sync, full-mesh pairing, hybrid PQ handshake, self-healing routes.',
       },
       {
         id: 'protocol-changes',

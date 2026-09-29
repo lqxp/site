@@ -1274,6 +1274,7 @@
                   <li>The sender must be identified (<code>user_id</code> plus <code>username</code> non-empty; session revalidation is already enforced by dispatch).</li>
                   <li>Fan-out targets <code>players</code> with the same <code>user_id</code>, a different <code>session_id</code>, and an empty <code>toClientId</code> or a matching <code>client_id</code>. Recipients are collected under the read lock, then <code>try_send</code> after the lock is dropped (lossy if a 512-message queue is full, same as op 55/111).</li>
                   <li>No database write, no <code>room_messages</code> push, no dead-drop, no history. Invisible devices are included, unlike room broadcasts.</li>
+                  <li>Stale routing is silent: a <code>toClientId</code> that no longer maps to a connected session reaches zero recipients, yet the sender still gets <code>{ ok: true }</code> (relay ack, not peer ack). The client therefore never trusts the relay ack and heals routing itself (see Mesh self-healing below).</li>
                 </ul>
 
                 <h3>Trust root and key schedule (client-only)</h3>
@@ -1302,10 +1303,16 @@
                 <p>
                   Sessions are additionally persisted client-side, AES-GCM encrypted under
                   <code>HKDF(syncRoot, "", "qxcloudsync:persist:v1")</code>, so a browser restart does not force a re-pair
-                  (the server still stores nothing). Pairing is automatic: with sync enabled and the 12 words present, each client
-                  broadcasts a signed hello on boot (jittered 2–6 s); any holder of the same words verifies the HMAC and answers.
-                  There is no manual button in the routine flow; the manual Pair only forces an immediate search. One session per peer
-                  (N devices): hello is broadcast, accept/confirm/data are unicast via <code>toClientId</code>.
+                  (the server still stores nothing). The topology is a full mesh of pairwise sessions with
+                  <strong>no transitive trust and no forwarding</strong>: a device paired with two others does not make
+                  those two know each other, and it never relays between them — every pair needs its own direct
+                  handshake (N devices = N(N−1)/2 handshakes). With sync enabled and the 12 words present, a client
+                  holding zero sessions broadcasts a signed hello on boot (jittered 2–6 s); any holder of the same words
+                  verifies the HMAC and answers. Devices that already hold sessions do not auto-hello; the manual Pair
+                  button (or a re-handshake, see below) covers later joins. Duplicate hellos are ignored while the
+                  existing session shows recent verified inbound traffic, but answered when that session is stale
+                  (reinstall / divergence recovery) — the completed handshake then replaces the old session and its
+                  secrets are wiped. Hello is broadcast, accept/confirm/data are unicast via <code>toClientId</code>.
                 </p>
                 <p>
                   Hellos carry a signed normalized <code>platform</code> (<code>mobile</code> | <code>web</code> | <code>desktop</code>)
@@ -1313,6 +1320,19 @@
                   <code>syncId:epoch:n:from:to</code>) plus a device ECDSA signature, with anti-replay on
                   <code>(syncId, epoch, n)</code>.
                 </p>
+
+                <h3>Mesh self-healing (client-only)</h3>
+                <p>
+                  The peer routing address (<code>peerWs</code>, the peer's WebSocket <code>client_id</code> used for unicast)
+                  goes stale on every reconnect, tab reload, or phone wake — and the relay drops such frames without telling
+                  the sender. Before healing, a stale leg stalled silently and a rekey lost in a stale route split epochs
+                  permanently (both sides then drop everything).
+                </p>
+                <ul class="doc-bullets">
+                  <li>Each session tracks <code>lastInboundAt</code> (last <em>verified inbound</em> traffic only — the displayed <code>lastSeen</code> is also bumped on send, so it can never detect a one-way black hole).</li>
+                  <li>Past 3 minutes without inbound, pushes, rekeys and revokes fall back to broadcast (empty <code>toClientId</code>, fanned out to all same-<code>user_id</code> sessions). Reception refreshes <code>peerWs</code> via <code>fromClientId</code> and the ack heals the way back — one round trip restores the leg, no user action.</li>
+                  <li>Epoch healing on receive, only for envelopes addressed to us: a missed rekey is absorbed by a bounded local fast-forward (≤ 10 epochs; the subsequent envelope open authenticates, so only the master holder can trigger adoption); a behind peer gets the current signed rekey re-sent; an unknown <code>syncId</code> triggers a fresh handshake. Re-handshakes and rekey resends are rate-limited to one per minute per peer, and the epoch is never advanced without a successful rekey send.</li>
+                </ul>
 
                 <h3>deepMerge rules</h3>
                 <ul class="doc-bullets">
