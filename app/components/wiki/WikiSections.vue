@@ -664,6 +664,8 @@
                       <tr><td>50</td><td>Set calls enabled</td><td>Client to server</td></tr>
                       <tr><td>51</td><td>Set call access</td><td>Client to server</td></tr>
                       <tr><td>52</td><td>Unmute member</td><td>Client to server</td></tr>
+                      <tr><td>60</td><td>Sync envelope (QxCloudSync)</td><td>Client to server</td></tr>
+                      <tr><td>61</td><td>Sync fan-out (QxCloudSync)</td><td>Server to client</td></tr>
                       <tr><td>98</td><td>Update voice chat state</td><td>Both</td></tr>
                       <tr><td>100</td><td>Update mute state</td><td>Client to server</td></tr>
                       <tr><td>101</td><td>Admin status</td><td>Client to server</td></tr>
@@ -1233,6 +1235,110 @@
                     </tbody>
                   </table>
                 </div>
+              </article>
+    <article v-if="section === 'qxcloudsync'" id="qxcloudsync" class="doc-chapter">
+                <div class="chapter-header">
+                  <h2>QxCloudSync Protocol</h2>
+                  <NuxtLink to="/wiki/qxcloudsync" class="heading-anchor" aria-label="Permalink to QxCloudSync Protocol">#</NuxtLink>
+                </div>
+
+                <p>
+                  QxCloudSync synchronizes rooms, messages, parameters, and friend-room keys between two sessions of the same
+                  <code>user_id</code> in <code>deepMerge</code> mode: every object carries <code>{ updatedAt, by }</code>, rooms and
+                  messages carry ids, and merges are union plus last-writer-wins.
+                </p>
+
+                <div class="gitbook-callout gitbook-callout--info">
+                  <div class="callout-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                  </div>
+                  <div class="callout-body">
+                    <strong>Blind, amnesic relay</strong>
+                    <p>The server stores nothing, reads nothing, and logs nothing. It checks the session, the rate limit, and the opaque byte cap, then fans the ciphertext out to sibling sessions. All authentication and confidentiality are enforced client-side only.</p>
+                  </div>
+                </div>
+
+                <h3>Transport</h3>
+                <p>Client to server (opcode 60):</p>
+                <div class="doc-code-block"><pre><code>{ "op": 60, "d": { "toClientId": "&lt;48 chars | empty = broadcast&gt;",
+  "encrypted": { "...opaque..." }, "requestId?": "&lt;≤128 chars&gt;" } }</code></pre></div>
+                <p>Server to siblings (opcode 61, forwarded as-is):</p>
+                <div class="doc-code-block"><pre><code>{ "op": 61, "d": { "fromClientId": "...",
+  "toClientId": "...", "encrypted": { "...opaque..." } } }</code></pre></div>
+                <p>Server to sender, only when <code>requestId</code> is present (relay ack, not peer ack):</p>
+                <div class="doc-code-block"><pre><code>{ "op": 60, "d": { "ok": true, "requestId": "..." } }</code></pre></div>
+                <p>The handler is <code>relay_cloud_sync_op</code> (<code>websocket/protocol.rs</code>), modelled on <code>relay_room_signal</code> (op 55 → 56):</p>
+                <ul class="doc-bullets">
+                  <li>Rate limit <code>cloud_sync:session:&lt;sid&gt;</code> 30 per 10 seconds. The global WebSocket guard (1200 per 60 seconds) also applies.</li>
+                  <li><code>d.encrypted</code> must be a JSON object with a serialized length of at most 64 KiB (<code>MAX_CLOUD_SYNC_BYTES</code>), else <code>"Payload too large"</code>.</li>
+                  <li>The sender must be identified (<code>user_id</code> plus <code>username</code> non-empty; session revalidation is already enforced by dispatch).</li>
+                  <li>Fan-out targets <code>players</code> with the same <code>user_id</code>, a different <code>session_id</code>, and an empty <code>toClientId</code> or a matching <code>client_id</code>. Recipients are collected under the read lock, then <code>try_send</code> after the lock is dropped (lossy if a 512-message queue is full, same as op 55/111).</li>
+                  <li>No database write, no <code>room_messages</code> push, no dead-drop, no history. Invisible devices are included, unlike room broadcasts.</li>
+                </ul>
+
+                <h3>Trust root and key schedule (client-only)</h3>
+                <p>
+                  The <code>masterSecret</code> comes from the 12 recovery words (PBKDF2-SHA256 100k, salt
+                  <code>qxphantom:master</code>, then HKDF <code>qxp-master</code>) and is never transmitted.
+                </p>
+                <div class="doc-table-wrap">
+                  <table>
+                    <thead><tr><th>Key</th><th>Derivation</th><th>Role</th></tr></thead>
+                    <tbody>
+                      <tr><td><code>syncRoot</code></td><td><code>HKDF(master, "", "qxcloudsync:root:v1")</code></td><td>Sync trust root, RAM-only.</td></tr>
+                      <tr><td><code>syncAuth</code></td><td><code>HKDF(syncRoot, "", "qxcloudsync:auth:v1")</code></td><td>HMAC key authenticating hellos.</td></tr>
+                      <tr><td><code>syncMaster</code></td><td><code>HKDF(ecdh || ss1 || ss2 || syncRoot, transcript, "qxcloudsync:master:v1")</code></td><td>Session master, RAM-only. Ephemeral private keys are wiped after use.</td></tr>
+                      <tr><td><code>syncEpochKey_k</code></td><td><code>HKDF(syncMaster, BE64(k), "qxcloudsync:epoch:v1")</code></td><td>Data key, 7-day TTL, auto-rotation at TTL − 10% via a signed <code>rekey</code> hello (no new ECDH). Old epoch keys are dropped.</td></tr>
+                      <tr><td><code>wrapKey</code></td><td><code>HKDF(epochKey, "", "qxcloudsync:roomkey-wrap:v1")</code></td><td>Wraps <code>roomKey</code> with AES-GCM; the room key never travels raw.</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p>Handshake, all inside <code>d.encrypted</code> and signed:</p>
+                <ul class="doc-bullets">
+                  <li><code>hello</code> (ephemeral P-256 plus ephemeral ML-KEM-768 public key) → <code>accept</code> (plus ML-KEM ciphertext to the initiator) → <code>confirm</code> (plus ML-KEM ciphertext to the responder).</li>
+                  <li>Each hello carries <code>auth = HMAC(syncAuth, canonical)</code> plus a <strong>hybrid signature</strong>: device ECDSA P-256 <strong>and</strong> SLH-DSA-SHA2-128f (FIPS 205, 17088-byte signatures, <code>crypto/slhdsa.ts</code>). Both must verify (fail closed); a wrong HMAC or a missing/invalid PQ signature is silently dropped. Each device holds a long-term SLH-DSA identity keypair (<code>qxcloudsync-device-v1</code>).</li>
+                  <li>Post-quantum posture: KEX = ECDH + 2× ML-KEM-768 (FIPS 203), safe via the ML-KEM component; identity = ECDSA + SLH-DSA (FIPS 205); session data = AES-256-GCM (PQ-safe symmetric, Grover halves 256-bit to a comfortable 128-bit). PQ signatures are deliberately handshake-only: a 17 KiB signature on every data part would eat the 64 KiB relay budget and CPU per push, while AES-GCM already gives PQ authenticity per part.</li>
+                </ul>
+                <p>
+                  Sessions are additionally persisted client-side, AES-GCM encrypted under
+                  <code>HKDF(syncRoot, "", "qxcloudsync:persist:v1")</code>, so a browser restart does not force a re-pair
+                  (the server still stores nothing). Pairing is automatic: with sync enabled and the 12 words present, each client
+                  broadcasts a signed hello on boot (jittered 2–6 s); any holder of the same words verifies the HMAC and answers.
+                  There is no manual button in the routine flow; the manual Pair only forces an immediate search. One session per peer
+                  (N devices): hello is broadcast, accept/confirm/data are unicast via <code>toClientId</code>.
+                </p>
+                <p>
+                  Hellos carry a signed normalized <code>platform</code> (<code>mobile</code> | <code>web</code> | <code>desktop</code>)
+                  shown in Settings → Sync with one icon per type. Data envelopes are AES-256-GCM under the epoch key (AAD
+                  <code>syncId:epoch:n:from:to</code>) plus a device ECDSA signature, with anti-replay on
+                  <code>(syncId, epoch, n)</code>.
+                </p>
+
+                <h3>deepMerge rules</h3>
+                <ul class="doc-bullets">
+                  <li>Version vectors <code>{ deviceId: counter }</code> select deltas; merge is union plus last-writer-wins (tie-break: lexicographically greater <code>by</code> wins). Ratchets merge by <code>max</code>.</li>
+                  <li>Trusted sender keys merge by union; a divergent JWK keeps the local one and raises an error (no silent overwrite).</li>
+                  <li><strong>Room-key conflict policy: refuse plus manual choice</strong> — the local key is kept, the conflict is surfaced in Settings → Sync, and the user picks Keep local / Request remote re-push.</li>
+                  <li>Large snapshots are split into valid sub-snapshots (rooms/params chunk plus message batches of ~100 per room) so each relay frame stays ≤ 64 KiB. Full history lives in client IndexedDB (<code>qxcloudsync-v1</code>), beyond the 500-per-room localStorage cap. Sync pauses under client-lock, RAM-only OPSEC, or decoy.</li>
+                  <li>Room deletion (op 57/58) travels as a <code>deleted</code> tombstone collection (30-day TTL): the deleted room is dropped locally (lists, messages, keys, pins, IndexedDB) and never re-imported from stale snapshots while the tombstone lives. Pins (<code>pinnedRooms</code>, ≤ 5) sync last-writer-wins; room <code>members</code> are attached for newly imported rooms only, so live rosters are never clobbered.</li>
+                </ul>
+
+                <h3>Event propagation</h3>
+                <p>
+                  Snapshots are full-state and idempotent, but they are not only periodic: <code>persist()</code> itself notifies
+                  subscribers (internal mutation calls included), coalesced into one push 2.5 s after the last change. Out-of-band
+                  stores (custom theme, locale) are observed with synchronous watchers. Applying a remote snapshot never re-notifies
+                  (internal guard), so there is no echo loop. The 90 s timer remains as a safety net.
+                </p>
+
+                <h3>Security properties (audited)</h3>
+                <ul class="doc-bullets">
+                  <li><strong>Quantum-proof (hybrid):</strong> KEX = ECDH P-256 + 2× ML-KEM-768 (FIPS 203), safe via the ML-KEM component; identity = ECDSA P-256 + SLH-DSA-SHA2-128f (FIPS 205), both required; session data = AES-256-GCM (≈128-bit PQ margin).</li>
+                  <li><strong>Transcript integrity:</strong> the KDF transcript is hashed over canonical JSON (sorted keys), never <code>JSON.stringify</code> — the server re-serializes in sorted order, so a naive hash would diverge per side.</li>
+                  <li><strong>Anti-replay:</strong> per-peer <code>(syncId, epoch)</code> window with monotonic high-water (tolerance 5000 for reordering) plus a bounded dedup set (6000 entries, pruned). Survives restarts via the persisted <code>sendN</code>; last-writer-wins merge makes residual replays harmless.</li>
+                  <li><strong>At rest:</strong> without client lock, session blobs are AES-GCM under a syncRoot-derived key (device boundary, same as the stored recovery words). With client lock active, sessions and the SLH-DSA identity rest only under AES-GCM envelopes keyed by the lock key; locking wipes all RAM secrets (masters, epoch keys, syncRoot, SLH cache) and never downgrades envelopes.</li>
+                  <li><strong>Residual (accepted):</strong> hello replay is a bounded nuisance (server rate 30/10 s, 5 recent pendings max, 120 s sweep); the server observes timing, frame counts and approximate sizes (no padding to fixed buckets, unlike PHANTOM); PBKDF2-100k for the master follows the pre-existing PHANTOM parameters.</li>
+                </ul>
               </article>
     <article v-if="section === 'protocol-changes'" id="protocol-changes" class="doc-chapter">
                 <div class="chapter-header">

@@ -1,7 +1,8 @@
 # QxChat and QXP-PHANTOM: Protocol Documentation
 
 This directory contains the deep technical reference for the QxChat server and
-client, including the QXP-PHANTOM "ghost rendezvous" friend protocol. It is the
+client, including the QXP-PHANTOM "ghost rendezvous" friend protocol and the
+QxCloudSync device-to-device sync protocol. It is the
 source material for the public documentation site.
 
 The documentation describes the protocol as it is implemented in the current
@@ -24,6 +25,8 @@ The documentation covers:
 - The cryptographic primitives and their exact wire formats.
 - The anti-abuse layer: rate limiting, anonymous quota tokens, the Verifiable
   Delay Function, the CAPTCHA challenge, and the Privacy Pass redemption status.
+- The QxCloudSync device-to-device sync protocol: blind relay, hybrid
+  post-quantum handshake, epoch keys, and deepMerge rules.
 
 ## How to read
 
@@ -37,6 +40,7 @@ The documentation covers:
 | [06-cryptographic-primitives.md](./06-cryptographic-primitives.md) | Exact derivations, formats, and byte sizes. |
 | [07-anti-abuse.md](./07-anti-abuse.md) | Rate limits, the VDF, CAPTCHA, quota tokens, and Privacy Pass status. |
 | [08-protocol-changes.md](./08-protocol-changes.md) | Added operations and the explicit gaps versus the design specification. |
+| [09-qxcloudsync.md](./09-qxcloudsync.md) | QxCloudSync: blind relay, hybrid PQ handshake, epoch keys, deepMerge. |
 
 ## Conventions
 

@@ -135,6 +135,14 @@ export const wikiGroups: WikiGroup[] = [
         teaser: 'Rate limits, quota tokens, VDF challenges and storage bounds.',
       },
       {
+        id: 'qxcloudsync',
+        label: 'QxCloudSync Protocol',
+        group: 'TECHNICAL REFERENCE',
+        seoTitle: 'QxCloudSync Device Sync — Technical Reference',
+        seoDescription: 'Device-to-device sync over a blind relay: hybrid post-quantum handshake, epoch keys, AES-256-GCM envelopes, and deepMerge rules.',
+        teaser: 'Blind relay sync, hybrid PQ handshake, epoch keys, deepMerge.',
+      },
+      {
         id: 'protocol-changes',
         label: 'Changelog & Gap Report',
         group: 'TECHNICAL REFERENCE',
