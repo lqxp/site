@@ -28,6 +28,7 @@
           <li><NuxtLink to="/">Home</NuxtLink></li>
           <li><NuxtLink to="/download">Downloads</NuxtLink></li>
           <li><NuxtLink to="/wiki">Docs</NuxtLink></li>
+          <li><NuxtLink to="/privacy">Privacy</NuxtLink></li>
         </ul>
       </div>
 

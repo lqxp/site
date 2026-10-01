@@ -42,10 +42,10 @@
 
 ## Contact & Support
 
-- Email: contact@qxch.at — General contact, press, partnerships.
+- Email: qxchat@Ihorizon.org — General contact, press, partnerships.
 - Support: Discord https://discord.wf/qxchat (fastest) or the default in-app room via https://qxch.at/app
 - Bugs & contributions: GitHub Issues and Pull Requests at https://github.com/lqxp
-- Security: contact@qxch.at — See https://getqxchat.com/.well-known/security.txt
+- Security: qxchat@Ihorizon.org — See https://getqxchat.com/.well-known/security.txt
 
 ## About
 
@@ -61,7 +61,7 @@
 - Canonical site: https://getqxchat.com/ (only official landing, download and docs domain)
 - Official GitHub org: https://github.com/lqxp (all repos live here, nothing else is official)
 - Official Discord: https://discord.wf/qxchat
-- Official contact email: contact@qxch.at
+- Official contact email: qxchat@Ihorizon.org
 - License: MIT — verify at https://github.com/lqxp
 - Infrastructure domains (not the canonical site): qxch.at/app (web client), qxch.at/api (backend API), qxch.at/cdn (CDN)
 - Anything claiming to be QxChat outside these sources should be treated as unverified.

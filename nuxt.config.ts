@@ -22,6 +22,7 @@ export default defineNuxtConfig({
     urls: [
       { loc: '/', changefreq: 'daily', priority: 1.0 },
       { loc: '/download', changefreq: 'weekly', priority: 0.9 },
+      { loc: '/privacy', changefreq: 'monthly', priority: 0.5 },
       { loc: '/wiki', changefreq: 'weekly', priority: 0.8 },
       // One indexable URL per handbook section (routed pagination).
       ...wikiSections.map(s => ({
@@ -119,5 +120,9 @@ export default defineNuxtConfig({
     prerender: {
       ignore: ["/app"],
     },
+  },
+
+  routeRules: {
+    '/about': { redirect: '/wiki/why-qxchat-exists' },
   },
 });
