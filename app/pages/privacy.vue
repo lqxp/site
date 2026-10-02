@@ -11,7 +11,7 @@
         </p>
         <div class="privacy-meta">
           <span class="meta-pill"><span class="pulse-dot"></span>Effective: October 1, 2026</span>
-          <span class="meta-pill meta-pill--muted">Developer: QxChat team (lqxp) — <a href="mailto:qxchat@Ihorizon.org">qxchat@Ihorizon.org</a></span>
+          <span class="meta-pill meta-pill--muted">Developer: QxChat team (lqxp) — <a href="mailto:contact@qxch.at">contact@qxch.at</a></span>
           <span class="meta-pill meta-pill--muted">Applies to: apps + any LQXP server you use</span>
         </div>
       </div>
@@ -79,7 +79,7 @@
           <div id="controller" class="policy-section">
             <h2><span class="sec-num">01</span>Developer, scope & who controls your data</h2>
             <ul class="policy-list">
-              <li><strong>Developer:</strong> QxChat team (open-source organization <code>lqxp</code>). Website <a href="https://getqxchat.com">getqxchat.com</a>. Contact <a href="mailto:qxchat@Ihorizon.org">qxchat@Ihorizon.org</a>. Security contact per <a href="/.well-known/security.txt">/.well-known/security.txt</a>.</li>
+              <li><strong>Developer:</strong> QxChat team (open-source organization <code>lqxp</code>). Website <a href="https://getqxchat.com">getqxchat.com</a>. Contact <a href="mailto:contact@qxch.at">contact@qxch.at</a>. Security contact per <a href="/.well-known/security.txt">/.well-known/security.txt</a>.</li>
               <li><strong>In scope:</strong> QxChat Android app (Google Play + direct APK), iOS, desktop (Tauri) and web clients, and the LQXP reference server (<a href="https://github.com/lqxp/lqxp" target="_blank" rel="noopener">lqxp/lqxp</a>) when operated by us as the <code>qxch.at</code> demo instance.</li>
               <li><strong>Controller model (important for a self-hosted product):</strong> LQXP ships software; the operator of the server you connect to is the data controller for server-side data. Your own server → you are the controller. A friend's or community server → that operator. The <code>qxch.at</code> demo instance → us, under this policy with default settings.</li>
             </ul>
@@ -205,7 +205,7 @@
               <li><strong>In the app (any platform, including Android):</strong> <code>Settings → Profile → Delete account → confirm → enter password</code>. The server then removes sessions, prekey bundle, block tags, the account row and your avatar/banner files, and disconnects all live sessions; the app wipes local state.</li>
               <li><strong>Local-only wipe:</strong> <code>Settings → Clear local data</code> removes the on-device vault and history without touching the server account.</li>
               <li><strong>Messages/rooms:</strong> deleting a message writes a tombstone and removes its attachment file; room owners can delete whole rooms; <code>deleteMessagesOnLeave</code> drops messages on leave.</li>
-              <li><strong>By email:</strong> <a href="mailto:qxchat@Ihorizon.org">qxchat@Ihorizon.org</a> (demo instance <code>qxch.at</code>). State your username and server; we verify via a signed challenge or password-equivalent proof before acting. For third-party servers, contact that operator.</li>
+              <li><strong>By email:</strong> <a href="mailto:contact@qxch.at">contact@qxch.at</a> (demo instance <code>qxch.at</code>). State your username and server; we verify via a signed challenge or password-equivalent proof before acting. For third-party servers, contact that operator.</li>
               <li><strong>Timelines:</strong> in-app deletion is immediate on the live server; RAM buffers vanish at latest on restart; backups (if the operator keeps any) expire on their rotation. Recovery words cannot be recovered after deletion — the account is gone.</li>
             </ul>
           </div>
@@ -222,7 +222,7 @@
 
           <div id="children" class="policy-section">
             <h2><span class="sec-num">12</span>Children</h2>
-            <p>QxChat is a general-purpose messaging app <strong>not directed at children under 13</strong> (and not at under-16s where local law sets a higher digital-consent age). We do not knowingly collect data from children. If you believe a child provided data, contact <a href="mailto:qxchat@Ihorizon.org">qxchat@Ihorizon.org</a> and the relevant server operator for deletion.</p>
+            <p>QxChat is a general-purpose messaging app <strong>not directed at children under 13</strong> (and not at under-16s where local law sets a higher digital-consent age). We do not knowingly collect data from children. If you believe a child provided data, contact <a href="mailto:contact@qxch.at">contact@qxch.at</a> and the relevant server operator for deletion.</p>
           </div>
 
           <div id="transfers" class="policy-section">
@@ -235,7 +235,7 @@
             <ul class="policy-list">
               <li><strong>Access:</strong> <code>GET /api/auth/me</code> returns your stored profile; the app shows the rest.</li>
               <li><strong>Rectification:</strong> edit profile, status, username (max 1/week) in-app.</li>
-              <li><strong>Erasure / restriction / objection / portability:</strong> delete account, messages and rooms (§10); ask your operator about restriction; object to optional features by disabling them. No automated export endpoint yet — request a copy via your operator or <a href="mailto:qxchat@Ihorizon.org">qxchat@Ihorizon.org</a>.</li>
+              <li><strong>Erasure / restriction / objection / portability:</strong> delete account, messages and rooms (§10); ask your operator about restriction; object to optional features by disabling them. No automated export endpoint yet — request a copy via your operator or <a href="mailto:contact@qxch.at">contact@qxch.at</a>.</li>
               <li><strong>Always contact your server operator first</strong> — they hold your account row. You retain the right to complain to your supervisory authority (e.g. EU DPA, UK ICO) or use Play's reporting for the Play-distributed app.</li>
             </ul>
           </div>
@@ -248,8 +248,8 @@
           <div id="contact" class="policy-section">
             <h2><span class="sec-num">16</span>Contact</h2>
             <ul class="policy-list">
-              <li><strong>Privacy & data requests (demo instance):</strong> <a href="mailto:qxchat@Ihorizon.org">qxchat@Ihorizon.org</a>.</li>
-              <li><strong>Security issues:</strong> <a href="mailto:qxchat@Ihorizon.org">qxchat@Ihorizon.org</a>, see <a href="/.well-known/security.txt">/.well-known/security.txt</a>. Do not post secrets or recovery phrases on Discord or GitHub.</li>
+              <li><strong>Privacy & data requests (demo instance):</strong> <a href="mailto:contact@qxch.at">contact@qxch.at</a>.</li>
+              <li><strong>Security issues:</strong> <a href="mailto:contact@qxch.at">contact@qxch.at</a>, see <a href="/.well-known/security.txt">/.well-known/security.txt</a>. Do not post secrets or recovery phrases on Discord or GitHub.</li>
               <li><strong>Community (no sensitive data):</strong> <a href="https://discord.wf/qxchat" target="_blank" rel="noopener">Discord</a> · <a href="https://github.com/lqxp" target="_blank" rel="noopener">GitHub</a>.</li>
             </ul>
           </div>
