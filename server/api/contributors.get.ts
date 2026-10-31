@@ -1,71 +1,55 @@
-export default cachedEventHandler(
-  async () => {
-    const repos = ['app', 'client', 'lqxp', 'qxchat.ts', 'site']
-    const contributorsMap = new Map<
-      string,
-      {
-        login: string
-        id: number
-        avatar_url: string
-        html_url: string
-        contributions: number
-      }
-    >()
+export interface Contributor {
+  login: string
+  avatar: string
+  total: number
+  repos: { name: string, commits: number }[]
+}
 
-    await Promise.allSettled(
-      repos.map(async (repo) => {
-        try {
-          const res = await $fetch<any[]>(
-            `https://api.github.com/repos/lqxp/${repo}/contributors?per_page=100`,
-            {
-              headers: {
-                accept: 'application/vnd.github+json',
-                'User-Agent': 'QxChat'
-              }
-            }
-          )
+const repos = ['lqxp', 'app', 'client', 'site', 'qxchat.ts']
 
-          if (Array.isArray(res)) {
-            for (const c of res) {
-              if (!c.login || c.type === 'Bot' || c.login.includes('[bot]')) continue
-              const existing = contributorsMap.get(c.login)
-              if (existing) {
-                existing.contributions += c.contributions || 0
-              } else {
-                contributorsMap.set(c.login, {
-                  login: c.login,
-                  id: c.id,
-                  avatar_url: c.avatar_url,
-                  html_url: c.html_url,
-                  contributions: c.contributions || 0
-                })
-              }
-            }
-          }
-        } catch (e) {}
-      })
+const aliases: Record<string, string> = {
+  'Anaïs Saraiva': 'Kisakay',
+  'Anais Saraiva': 'Kisakay',
+}
+
+export default cachedEventHandler(async (): Promise<Contributor[]> => {
+  const people = new Map<string, { repos: Map<string, number> }>()
+  const results = await Promise.allSettled(repos.map(async (repo) => {
+    const list = await $fetch<{ login?: string, name?: string, type?: string, contributions?: number }[]>(
+      `https://api.github.com/repos/lqxp/${repo}/contributors?per_page=100&anon=1`,
+      { headers: ghHeaders() },
     )
-
-    const list = Array.from(contributorsMap.values()).sort(
-      (a, b) => b.contributions - a.contributions
-    )
-
-    if (list.length === 0) {
-      return [
-        {
-          login: 'lqxp',
-          id: 1,
-          avatar_url: 'https://avatars.githubusercontent.com/u/198751508?v=4',
-          html_url: 'https://github.com/lqxp',
-          contributions: 1
-        }
-      ]
+    for (const c of list) {
+      const login = c.type === 'Anonymous' ? aliases[c.name ?? ''] : c.login
+      if (!login || c.type === 'Bot' || login.includes('[bot]'))
+        continue
+      const p = people.get(login) ?? { repos: new Map() }
+      p.repos.set(repo, (p.repos.get(repo) ?? 0) + (c.contributions ?? 0))
+      people.set(login, p)
     }
+  }))
 
-    return list
-  },
-  {
-    maxAge: 60 * 15,
-    name: 'github-contributors'
+  if (results.some(r => r.status === 'rejected')) {
+    const last = await snapshot<Contributor[]>('contributors')
+    if (last?.length)
+      return last
   }
-)
+
+  // Avatars are served from our own origin (/avatars/<login>.<ext>, prerendered by People.vue) rather than
+  // inlined as base64: the page stays light and nothing is loaded from GitHub.
+  const out = await Promise.all([...people].map(async ([login, p]): Promise<Contributor> => {
+    let avatar = ''
+    try {
+      const res = await $fetch.raw(avatarUrl(login), { method: 'HEAD', headers: ghHeaders() })
+      avatar = `/avatars/${login}.${avatarExt(res.headers.get('content-type'))}`
+    }
+    catch {}
+    const list = [...p.repos].map(([name, commits]) => ({ name, commits })).sort((a, b) => b.commits - a.commits)
+    return { login, avatar, total: list.reduce((n, r) => n + r.commits, 0), repos: list }
+  }))
+  out.sort((a, b) => b.total - a.total)
+  if (!out.length)
+    return (await snapshot<Contributor[]>('contributors')) ?? []
+  await remember('contributors', out)
+  return out
+}, { maxAge: 60 * 60, name: 'contributors-v4' })

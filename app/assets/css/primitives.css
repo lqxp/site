@@ -1,0 +1,102 @@
+@layer primitives {
+  .wrap {
+    width: 100%;
+    max-width: var(--z-measure-wide);
+    margin-inline: auto;
+    padding-inline: max(var(--s-4), env(safe-area-inset-left));
+  }
+  .wrap.wide { max-width: var(--z-measure-full); }
+  .wrap.narrow { max-width: var(--z-measure); }
+  @media (min-width: 600px) { .wrap { padding-inline: var(--s-6); } }
+
+  .section { padding-block: var(--s-16); }
+  @media (min-width: 840px) { .section { padding-block: var(--s-24); } }
+
+  .stack { display: flex; flex-direction: column; gap: var(--gap, var(--s-4)); }
+  .cluster { display: flex; flex-wrap: wrap; align-items: center; gap: var(--gap, var(--s-2)); }
+  .grid {
+    display: grid;
+    gap: var(--gap, var(--s-4));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--min, 18rem)), 1fr));
+  }
+  .split {
+    display: grid;
+    gap: var(--gap, var(--s-8));
+    align-items: center;
+  }
+  @media (min-width: 840px) { .split { grid-template-columns: var(--cols, 1fr 1fr); } }
+
+  .surface {
+    background: var(--bg, var(--surface-container-low));
+    color: var(--fg, var(--on-surface));
+    border-radius: var(--radius, var(--r-xl));
+  }
+  .surface.low { --bg: var(--surface-container-low); }
+  .surface.mid { --bg: var(--surface-container); }
+  .surface.high { --bg: var(--surface-container-high); }
+  .surface.highest { --bg: var(--surface-container-highest); }
+  .surface.primary { --bg: var(--primary-container); --fg: var(--on-primary-container); }
+  .surface.secondary { --bg: var(--secondary-container); --fg: var(--on-secondary-container); }
+  .surface.tertiary { --bg: var(--tertiary-container); --fg: var(--on-tertiary-container); }
+  .surface.inverse { --bg: var(--inverse-surface); --fg: var(--inverse-on-surface); }
+  .surface.outlined { --bg: var(--surface); box-shadow: inset 0 0 0 var(--z-hairline) var(--outline-variant); }
+  .pad { padding: var(--pad, var(--s-6)); }
+  @media (min-width: 840px) { .pad { padding: var(--pad-lg, var(--s-10)); } }
+
+  .state {
+    position: relative;
+    isolation: isolate;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .state::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: currentColor;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--dur-effects) var(--ease-effects);
+  }
+  .state:hover::before { opacity: var(--state-hover); }
+  .state:focus-visible::before { opacity: var(--state-focus); }
+  .state:active::before { opacity: var(--state-press); }
+
+  .muted { color: var(--on-surface-variant); }
+  .mono { font-family: var(--font-mono); }
+
+  .lens { position: relative; isolation: isolate; }
+  .lens-active, .lens-hover {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: -1;
+    width: var(--w);
+    height: var(--h);
+    border-radius: var(--r-full);
+    translate: var(--x) var(--y);
+    opacity: var(--o, 0);
+    pointer-events: none;
+  }
+  .lens-active { --x: var(--a-x); --y: var(--a-y); --w: var(--a-w); --h: var(--a-h); --o: var(--a-o); background: var(--lens-bg, var(--secondary-container)); }
+  .lens-hover { --x: var(--h-x); --y: var(--h-y); --w: var(--h-w); --h: var(--h-h); --o: var(--h-o); background: var(--lens-hover, color-mix(in srgb, currentColor 8%, transparent)); }
+  .lens[data-ready] :is(.lens-active, .lens-hover) {
+    transition:
+      translate var(--dur-spatial) var(--ease-spatial),
+      width var(--dur-spatial) var(--ease-spatial),
+      height var(--dur-spatial) var(--ease-spatial),
+      opacity var(--dur-effects) var(--ease-effects),
+      background-color var(--dur-effects) var(--ease-effects);
+  }
+
+  .only-dark { display: none; }
+  :root[data-theme="dark"] .only-dark { display: block; }
+  :root[data-theme="dark"] .only-light { display: none; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .only-dark { display: block; }
+    :root:not([data-theme="light"]) .only-light { display: none; }
+  }
+
+  .below-nav { padding-top: calc(var(--s-24) + var(--s-4)); }
+}

@@ -1,0 +1,137 @@
+<section aria-labelledby="controller"><h2 id="controller">1. Who we are and what this covers</h2>
+<p>QxChat is made by the QxChat team, the people behind the open-source organisation <code>lqxp</code>. You can reach us at <a href="mailto:contact@qxch.at">contact@qxch.at</a>. Security reports follow <a href="/.well-known/security.txt">/.well-known/security.txt</a>.</p>
+<p>This policy covers the QxChat apps (Android from Google Play or as an APK, iOS, desktop, and the web app) and the server software they connect to, LQXP (<a href="https://github.com/lqxp/lqxp" target="_blank" rel="noopener">lqxp/lqxp</a>).</p>
+<p><strong>Who is responsible for your data depends on the server you use.</strong> QxChat is software anyone can host. Whoever runs the server you connect to is responsible for what that server stores:</p>
+<ul>
+<li>on your own server, that is you;</li>
+<li>on a friend's or a community server, that is them;</li>
+<li>on our public server, <code>qxch.at</code>, that is us, and this policy applies with the default settings.</li>
+</ul>
+<p class="note">Because the code is open, someone could run a modified server. Message content stays unreadable even then, because it is encrypted on your device before it is sent. If you want the strongest guarantee, run the server yourself.</p>
+</section>
+<section aria-labelledby="principles"><h2 id="principles">2. How we approach your data</h2>
+<ul>
+<li><strong>We ask for as little as possible.</strong> There is no email field, no phone number field and no real-name field anywhere in QxChat.</li>
+<li><strong>We use data only to run the service.</strong> Messages, calls, device sync and keeping the service safe from abuse. Never advertising.</li>
+<li><strong>We never sell data.</strong> We do not sell, rent or trade it. The app contains no advertising, analytics, attribution or crash-reporting kit.</li>
+<li><strong>You can check all of this.</strong> The server, the apps and this website are open source under the MIT licence, and the <a href="/wiki">handbook</a> explains how each part works.</li>
+</ul>
+</section>
+<section aria-labelledby="collected"><h2 id="collected">3. What we collect and why</h2>
+<p>Here, "collect" means sent to the server or stored by the app. The Google Play Data Safety category is in brackets.</p>
+<div class="table" tabindex="0"><table>
+<thead><tr><th>What</th><th>Details</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td>Account (Personal info)</td><td>Your username, in lower case, 2 to 24 characters. Your password and your 12 recovery words, stored only as Argon2id hashes. Session tokens, stored as SHA-256 hashes and valid for 7 days after your last use.</td><td>Signing in, resetting your password, keeping you signed in</td></tr>
+<tr><td>What you send (Messages; Photos and videos; Audio; Files)</td><td>Room messages (up to 2,000 characters), encrypted envelopes, reactions, polls, attachments (up to 25 MB), profile pictures (up to 10 MB) and banners (up to 15 MB). Image metadata is removed on upload.</td><td>Delivering what you choose to send, to the server you chose</td></tr>
+<tr><td>Contacts (Contacts; Social)</td><td>The rooms you are in and your role there, friend and block tags, and your friend list as an encrypted blob of up to 64 KiB that the server cannot read.</td><td>Your friend list, rooms and blocking</td></tr>
+<tr><td>Calls and connection (App activity)</td><td>Whether you are online or typing, which rooms and calls you are in, call setup messages (relayed, never stored), device sync identifiers, and app settings such as your microphone and camera choice.</td><td>Delivering messages, calls and sync; remembering your settings</td></tr>
+<tr><td>Device (Device IDs; App performance)</td><td>A random identifier per install, used to route sync between your devices. The app version when it checks for updates. Abuse counters kept in memory only.</td><td>Sync, updates, protection against abuse</td></tr>
+</tbody></table></div>
+<p>We do not collect an advertising ID or an IMEI, and there are no analytics events.</p>
+<p class="note">For people in the EEA and the UK, the legal bases are: the contract (running your account and delivering your messages), our legitimate interest (security and abuse prevention), and your consent for optional features such as Tor, public STUN or Discord Rich Presence. Turn the feature off or delete your account to withdraw consent.</p>
+</section>
+<section aria-labelledby="safety"><h2 id="safety">4. Google Play Data Safety answers</h2>
+<div class="table" tabindex="0"><table>
+<thead><tr><th>Question</th><th>Answer</th></tr></thead>
+<tbody>
+<tr><td>Does the app collect user data?</td><td><strong>Yes</strong>: account, content, contacts and connection data, only to run messaging on the server you chose (section 3).</td></tr>
+<tr><td>Is data shared with third parties?</td><td><strong>No selling and no analytics sharing.</strong> Data only goes where it must for the feature to work: the server operator you chose, a TURN relay during calls, the website of a link you post (for its preview), and the update server. See section 8. No advertising kit, no Families kit.</td></tr>
+<tr><td>Is data encrypted in transit?</td><td><strong>Yes</strong>: HTTPS and secure WebSockets, and message content is also end-to-end encrypted (sections 7 and 11).</td></tr>
+<tr><td>Can users ask for deletion?</td><td><strong>Yes</strong>: in the app, or by email (section 10).</td></tr>
+<tr><td>Has the app had an independent security review?</td><td>Not yet. The code is public under the MIT licence so anyone can review it.</td></tr>
+</tbody></table></div>
+</section>
+<section aria-labelledby="permissions"><h2 id="permissions">5. Android permissions</h2>
+<p>Sensitive permissions are asked for when you first use the feature that needs them, and you can take them back at any time in your phone's settings. Saying no only turns off that feature.</p>
+<div class="table" tabindex="0"><table>
+<thead><tr><th>Permission</th><th>What it is used for</th></tr></thead>
+<tbody>
+<tr><td><code>INTERNET</code></td><td>Talking to your QxChat server, uploading and downloading files, checking for updates.</td></tr>
+<tr><td><code>CAMERA</code></td><td>Video calls and photos that you start. Never used in the background.</td></tr>
+<tr><td><code>RECORD_AUDIO</code> and <code>MODIFY_AUDIO_SETTINGS</code></td><td>Voice calls and voice messages that you start, and echo and speaker control during calls.</td></tr>
+<tr><td><code>POST_NOTIFICATIONS</code></td><td>Message and call notifications, created on your phone. QxChat does not use Firebase or Apple push.</td></tr>
+<tr><td><code>FOREGROUND_SERVICE</code> and <code>FOREGROUND_SERVICE_DATA_SYNC</code></td><td>Keeping the encrypted connection open in the background, so messages arrive without a push service.</td></tr>
+<tr><td><code>WAKE_LOCK</code></td><td>Stopping the phone from cutting a call or a sync in progress.</td></tr>
+<tr><td><code>READ_MEDIA_IMAGES</code>, <code>READ_MEDIA_VIDEO</code>, <code>READ_MEDIA_AUDIO</code>, <code>READ_MEDIA_VISUAL_USER_SELECTED</code> (and <code>READ_EXTERNAL_STORAGE</code> on Android 12 and older)</td><td>Opening only the photos, videos or audio files you pick, to send them or use them on your profile.</td></tr>
+<tr><td>Camera and microphone hardware</td><td>Marked as optional: text chat works on devices without them.</td></tr>
+</tbody></table></div>
+<p class="note">Released builds only use encrypted connections. Unencrypted HTTP is only used when a developer tests a server on their own machine (for example <code>127.0.0.1:4560</code>). The app never reads your location, your contacts, your SMS or your call log.</p>
+</section>
+<section aria-labelledby="use"><h2 id="use">6. What we use data for</h2>
+<ul>
+<li>Running accounts, rooms, direct messages, calls, file transfers, device sync, profiles and blocking.</li>
+<li>Rate limits and anti-abuse checks, with counters that live in memory and build no profile of you.</li>
+<li>Keeping the service up, with overall load counts kept in memory.</li>
+</ul>
+<p><strong>We never use your data</strong> for advertising, for building a profile of you, to train AI models, or to sell or give to data brokers.</p>
+</section>
+<section aria-labelledby="e2ee"><h2 id="e2ee">7. What encryption covers</h2>
+<ul>
+<li>Messages in private rooms are encrypted on your device with AES-256-GCM, using a new key for each message, and signed with ECDSA P-256. The server checks where a message goes and how big it is, never what it says.</li>
+<li>The server keeps about 150 recent messages per room in memory so people can catch up. They are never written to disk and are lost when the server restarts. There is no message history table.</li>
+<li>Friend requests (QXP-PHANTOM) and device sync (QxCloudSync) go through relays that cannot open what they carry. Friend requests wait in anonymous slots for 24 hours at most.</li>
+<li><strong>One exception:</strong> a server operator can set up an official announcement room. To send it to everyone, the server holds that room's key, so treat that one room as readable by the operator.</li>
+</ul>
+</section>
+<section aria-labelledby="sharing"><h2 id="sharing">8. Who else receives data</h2>
+<div class="table" tabindex="0"><table>
+<thead><tr><th>Who</th><th>What they get</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td>The operator of the server you use</td><td>Your account record, encrypted messages, presence and routing information, uploaded files</td><td>Running the service you connected to</td></tr>
+<tr><td>A TURN relay, chosen by the operator</td><td>Encrypted call audio and video, and the IP addresses of the call</td><td>Connecting a call when a direct connection fails</td></tr>
+<tr><td>The website of a link you post</td><td>The server's IP address and the link (fetched within 4 seconds, cached for 5 minutes)</td><td>Showing a preview of the link</td></tr>
+<tr><td>The update server (<code>github.com/lqxp/app</code>; Google Play for Play installs)</td><td>The app version, to check for a newer one; updates are verified with minisign</td><td>Safe updates</td></tr>
+<tr><td>Tor directory servers, only if you turn on Tor on desktop</td><td>The normal traffic Tor needs to start</td><td>Optional extra anonymity</td></tr>
+</tbody></table></div>
+<p>Nobody receives data for advertising, analytics or attribution. Discord Rich Presence only talks to the Discord app on your own computer (it shares the app version and your OS) and can be turned off. The app only opens links to <code>qxch.at</code>, <code>github.com</code>, <code>metrics.torproject.org</code>, email and phone links.</p>
+</section>
+<section aria-labelledby="retention"><h2 id="retention">9. Where data is kept, and for how long</h2>
+<ul>
+<li><strong>On your device:</strong> a local vault with your session, your keys, recent rooms and messages (about 500 per room) and your settings, plus a longer history of about 2,000 items. With Client Lock on, it is sealed with your PIN (PBKDF2 with 250,000 rounds, then AES-GCM), and secrets in memory are wiped when the app locks.</li>
+<li><strong>On the server, in memory only, gone on restart:</strong> recent room messages, friend request envelopes (24 hours at most), anti-abuse counters, link preview cache (5 minutes) and connection counters.</li>
+<li><strong>On the server, until you delete them:</strong> your account record, sessions, public keys, block tags, your encrypted friend list, rooms, and uploaded files (up to about 10 GB per server), in SQLite or PostgreSQL.</li>
+<li>Sessions end after 7 days without use. Poll votes are stored as hashes that cannot be linked back to you. If an operator makes backups, how long they keep them is up to them: ask them.</li>
+</ul>
+</section>
+<section aria-labelledby="deletion"><h2 id="deletion">10. Deleting your account and data</h2>
+<ul>
+<li><strong>In the app, on any platform including Android:</strong> <code>Settings → Profile → Delete account</code>, confirm, then enter your password. The server deletes your sessions, public keys, block tags, account record, profile picture and banner, and signs out all your devices. The app then clears its local data.</li>
+<li><strong>Only on this device:</strong> <code>Settings → Clear local data</code> removes the local vault and history and leaves your account as it is.</li>
+<li><strong>Messages and rooms:</strong> deleting a message removes it and its attachment. Room owners can delete a whole room, and a room can be set to remove your messages when you leave.</li>
+<li><strong>By email:</strong> write to <a href="mailto:contact@qxch.at">contact@qxch.at</a> for accounts on <code>qxch.at</code>, with your username. We will ask you to prove the account is yours before deleting anything. For accounts on other servers, contact that server's operator.</li>
+<li><strong>How fast:</strong> deletion in the app is immediate. Messages in server memory are gone at the next restart at the latest. Operator backups, if any, expire on their own schedule. Once your account is deleted, your recovery words no longer work.</li>
+</ul>
+</section>
+<section aria-labelledby="security"><h2 id="security">11. How we protect it</h2>
+<ul>
+<li><strong>In transit:</strong> HTTPS and secure WebSockets in production, with end-to-end encryption on top. TURN credentials are never logged.</li>
+<li><strong>Stored:</strong> passwords and recovery words as Argon2id hashes, session tokens as SHA-256 hashes, no secret stored in plain text, and metadata removed from uploaded images.</li>
+<li><strong>Against abuse:</strong> rate limits, quota tokens, a proof-of-time puzzle and a CAPTCHA, sign-in checks that do not reveal whether a username exists, and link previews that cannot be pointed at internal addresses.</li>
+<li><strong>What no software can do:</strong> protect an unlocked device in someone else's hands, or hide metadata from a server that was modified on purpose. Lock your devices, turn on Client Lock, check download signatures, and host your own server for the most control.</li>
+</ul>
+</section>
+<section aria-labelledby="children"><h2 id="children">12. Children</h2>
+<p>QxChat is a general messaging app and is not meant for children under 13, or under 16 where local law sets that age. We do not knowingly collect data from children. If you think a child has given us data, write to <a href="mailto:contact@qxch.at">contact@qxch.at</a> and to the operator of their server, and we will delete it.</p>
+</section>
+<section aria-labelledby="transfers"><h2 id="transfers">13. Where your data lives</h2>
+<p>There is no central QxChat cloud. Your data sits where the server you chose is hosted, together with its file storage and TURN relay. Host your own server to choose the country. A call may go through a TURN relay in another region when a direct connection fails, and link previews make the server visit the linked site. For people in the EEA and the UK, transfers rely on encryption, collecting little, and the operator's own safeguards where they apply.</p>
+</section>
+<section aria-labelledby="rights"><h2 id="rights">14. Your rights</h2>
+<ul>
+<li><strong>See your data:</strong> the app shows your profile and settings; the server returns your stored profile at <code>GET /api/auth/me</code>.</li>
+<li><strong>Correct it:</strong> change your profile and status in the app, and your username once a week.</li>
+<li><strong>Delete, restrict, object or take a copy:</strong> delete your account, messages and rooms (section 10), turn off optional features, and ask your server operator about restriction. There is no automatic export yet: ask your operator, or <a href="mailto:contact@qxch.at">contact@qxch.at</a> for <code>qxch.at</code>.</li>
+<li>Start with the operator of your server, since they hold your account. You can also complain to your data protection authority, such as a national authority in the EU or the ICO in the UK, or report the Play version of the app through Google Play.</li>
+</ul>
+</section>
+<section aria-labelledby="changes"><h2 id="changes">15. Changes to this policy</h2>
+<p>Every change is public in our repositories (<a href="https://github.com/lqxp/lqxp" target="_blank" rel="noopener">lqxp/lqxp</a>, <a href="https://github.com/lqxp/client" target="_blank" rel="noopener">lqxp/client</a>, <a href="https://github.com/lqxp/site" target="_blank" rel="noopener">lqxp/site</a>). Important changes are mentioned in the release notes and move the effective date at the top of this page. Using QxChat after that date means you accept the new version. Older versions stay in the git history.</p>
+</section>
+<section aria-labelledby="contact"><h2 id="contact">16. Contact</h2>
+<ul>
+<li><strong>Privacy questions and data requests for qxch.at:</strong> <a href="mailto:contact@qxch.at">contact@qxch.at</a>.</li>
+<li><strong>Security issues:</strong> <a href="mailto:contact@qxch.at">contact@qxch.at</a>, see <a href="/.well-known/security.txt">/.well-known/security.txt</a>. Never post secrets or recovery words on Discord or GitHub.</li>
+<li><strong>Everything else:</strong> <a href="https://discord.wf/qxchat" target="_blank" rel="noopener">Discord</a> or <a href="https://github.com/lqxp" target="_blank" rel="noopener">GitHub</a>.</li>
+</ul>
+</section>

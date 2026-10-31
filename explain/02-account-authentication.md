@@ -15,9 +15,9 @@ An account has two independent secrets:
 Both secrets are stored as Argon2id hashes. The plaintext is never persisted by
 the server.
 
-```text
-password         -> Argon2id -> users.password_hash
-recovery phrase  -> Argon2id -> users.recovery_hash
+```pipeline
+password -> Argon2id -> `users.password_hash`
+recovery phrase -> Argon2id -> `users.recovery_hash`
 ```
 
 ## 2.2 Password and recovery hashing

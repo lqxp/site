@@ -1,0 +1,55 @@
+@layer base {
+  .js .reveal:not(.in) { opacity: 0; }
+  .js .reveal.in { animation: rise var(--dur-reveal) var(--ease-spatial) backwards; animation-delay: calc(var(--stagger) * (1 - pow(0.8, var(--i, 0))) * 5); }
+  .js .reveal.pop.in { animation-name: pop-soft; }
+  @keyframes pop-soft { from { opacity: 0; scale: 0.94; } }
+
+  /* Above-the-fold copy never starts invisible: it is painted on the first frame (counts for LCP) and only settles into place. */
+  .enter-rise { animation: settle var(--dur-reveal) var(--ease-spatial) backwards; animation-delay: calc(var(--stagger) * (1 - pow(0.8, var(--i, 0))) * 5); }
+  .enter-pop { animation: pop var(--dur-spatial-slow) var(--ease-spatial-fast) backwards; animation-delay: calc(var(--stagger) * (1 - pow(0.8, var(--i, 0))) * 5); }
+  @keyframes rise { from { opacity: 0; translate: 0 var(--s-6); } }
+  @keyframes settle { from { opacity: 0.35; translate: 0 var(--s-4); } }
+  @keyframes pop { from { opacity: 0; scale: 0.5; } }
+  @keyframes fade { from { opacity: 0; } }
+
+  ::view-transition-old(root) { animation: fade-out 160ms cubic-bezier(0.3, 0, 0.8, 0.15) both; }
+  ::view-transition-new(root) { animation: fade-through 420ms cubic-bezier(0.05, 0.7, 0.1, 1) 120ms both; }
+  ::view-transition-group(nav),
+  ::view-transition-group(tabbar) { animation: none; z-index: 10; }
+  ::view-transition-old(nav),
+  ::view-transition-old(tabbar) { display: none; }
+  ::view-transition-new(nav),
+  ::view-transition-new(tabbar) { animation: none; }
+  @keyframes fade-out { to { opacity: 0; } }
+  @keyframes fade-through { from { opacity: 0; scale: 0.92; } }
+
+  .theme-swap::view-transition-old(root) { animation: none; }
+  .theme-swap::view-transition-new(root) { animation: circle var(--dur-intro) var(--ease-ios) both; }
+  @keyframes circle {
+    from { clip-path: circle(0 at var(--vt-x, 50%) var(--vt-y, 0)); }
+    to { clip-path: circle(150vmax at var(--vt-x, 50%) var(--vt-y, 0)); }
+  }
+
+  .swap-enter-active { transition: opacity var(--dur-effects) var(--ease-effects), scale var(--dur-spatial-fast) var(--ease-spatial-fast), filter var(--dur-effects) var(--ease-effects); }
+  .swap-leave-active { position: absolute; transition: opacity var(--dur-effects-fast) var(--ease-effects-fast), scale var(--dur-effects-fast) var(--ease-effects-fast); }
+  .swap-enter-from { opacity: 0; scale: 0.5; filter: blur(var(--s-1)); }
+  .swap-leave-to { opacity: 0; scale: 0.5; }
+
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      --dur-spatial-fast: 0ms;
+      --dur-spatial: 0ms;
+      --dur-spatial-slow: 0ms;
+      --dur-effects-fast: 0ms;
+      --dur-effects: 0ms;
+      --dur-effects-slow: 0ms;
+      --dur-reveal: 0ms;
+      --dur-intro: 0ms;
+      --stagger: 0ms;
+    }
+    .enter-rise, .enter-pop, .js .reveal.in { animation: none; }
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) { animation: none; }
+  }
+}

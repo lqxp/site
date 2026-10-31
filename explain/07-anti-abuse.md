@@ -64,24 +64,15 @@ client performed the KEM step. The key is one-time and expires after 3 minutes.
 The full CAPTCHA flow returns a one-time `cap` token that can gate a registration,
 login, recovery, or deposit.
 
-```text
-client                          server
-  |  GET /api/auth/cap/challenge  |
-  |----------------------------->|
-  |  { challengeId, scope,        |
-  |    issuedAt, expiresAt,       |
-  |    vdf, quotaToken, pqcKey,   |
-  |    signature }                |
-  |<-----------------------------|
-  |  solve VDF                    |
-  |  compute nullifier            |
-  |  encapsulate ML-KEM           |
-  |  POST /api/auth/cap/redeem    |
-  |  { challenge, vdfProof,       |
-  |    nullifier, pqcCiphertext } |
-  |----------------------------->|
-  |  { success, capToken }        |
-  |<-----------------------------|
+```sequence
+participants: Client, Server
+Client -> Server: `GET /api/auth/cap/challenge`
+Server -> Client: `challengeId`, `scope`, `issuedAt`, `expiresAt`, `vdf`, `quotaToken`, `pqcKey`, `signature`
+Client: solve the VDF
+Client: compute the nullifier
+Client: encapsulate with ML-KEM
+Client -> Server: `POST /api/auth/cap/redeem` with `challenge`, `vdfProof`, `nullifier`, `pqcCiphertext`
+Server -> Client: `success`, `capToken`
 ```
 
 The redeem handler verifies the challenge signature, consumes the quota

@@ -10,12 +10,12 @@ two sessions of the same `user_id`, in `deepMerge` mode. The server is a
   "encrypted": { ...opaque... }, "requestId?": "<≤128 chars>" } }`
 - Server → siblings: `{ "op": 61, "d": { "fromClientId": "...",
   "toClientId": "...", "encrypted": { ...opaque, forwarded as-is... } } }`
-  (wire format unchanged — older clients keep decrypting).
+  (wire format unchanged, older clients keep decrypting).
 - Server → sender (only if `requestId` present):
   `{ "op": 60, "d": { "ok": true, "delivered": <n>, "dropped": <n>,
   "peers": ["<clientId>", ...], "peerCount": <siblings>, "requestId": "..." } }`.
   `delivered` counts the sibling queues that accepted the frame, `dropped`
-  those whose queue was full (512) or gone — never silent anymore.
+  those whose queue was full (512) or gone, never silent anymore.
   `peers` lists the `clientId`s that received it, `peerCount` the total
   sibling sessions for this `user_id`. Older clients ignore the extra fields.
 - Presence directory, client → server:
@@ -62,12 +62,12 @@ Handler: `relay_cloud_sync_op` (`websocket/protocol.rs`), modelled on
 
 - Unicast frame with `delivered == 0` → stale route: resend once with empty
   `toClientId`, then `op: 62` to relearn the mesh. Do not spin: `dropped > 0`
-  means congested queues — retry that leg with backoff.
+  means congested queues, retry that leg with backoff.
 - On `op: 63` `join` from an unknown `clientId` → open a handshake to it;
   on `leave` → mark that leg's `peerWs` stale at once (no more pushing into
   the void); on `update` → refresh the Settings → Sync icon.
 - On boot (or after reconnect), fetch `op: 62`: if the mesh is non-empty and
-  no session exists for a listed peer, handshake it directly — do not wait
+  no session exists for a listed peer, handshake it directly, do not wait
   for its hello. This is what keeps 4-8-device meshes fully interconnected
   without the manual Pair button.
 
@@ -106,11 +106,11 @@ Handler: `relay_cloud_sync_op` (`websocket/protocol.rs`), modelled on
   the same words verifies the HMAC and answers. A client that already holds
   sessions also handshakes proactively: any peer learned via the op 62
   directory or an op 63 `join` event without a live session gets a direct
-  hello (see §9.1.1) — the manual Pair button and re-handshakes (§9.3) remain
+  hello (see §9.1.1), the manual Pair button and re-handshakes (§9.3) remain
   as fallback. Hello broadcast, accept/confirm/data unicast via
   `toClientId`. Duplicate hellos are ignored while the existing session shows
   recent verified inbound traffic, but answered when that session is stale
-  (reinstall / divergence recovery) — the completed handshake then replaces
+  (reinstall / divergence recovery), the completed handshake then replaces
   the old session and its secrets are wiped.
 - Hellos carry a signed normalized `platform` (`mobile` | `web` | `desktop`)
   shown in Settings → Sync with one icon per type.
@@ -128,19 +128,19 @@ Handler: `relay_cloud_sync_op` (`websocket/protocol.rs`), modelled on
 `peerWs` (the peer's WS `client_id` used for unicast) goes stale on every
 reconnect, tab reload, or phone wake. The relay now reports this instantly
 (`delivered: 0` on the op 60 ack, plus op 63 `leave`/`join` events and the
-op 62 directory — see §9.1.1); the mechanisms below remain as the safety net
+op 62 directory, see §9.1.1); the mechanisms below remain as the safety net
 for older servers and for frames sent without `requestId`. A rekey lost in
 a stale route still splits epochs (both sides then drop everything: the
 sender already advanced, the receiver's own rekey is rejected as
-`epoch != sess.epoch + 1`) — hence the epoch healing below.
+`epoch != sess.epoch + 1`), hence the epoch healing below.
 
 - `lastInboundAt` per session: last *verified inbound* traffic only.
   (`lastSeen` is also bumped on send, so it can never detect a one-way
-  black hole — a sender pushing into the void would look "fresh".)
+  black hole: a sender pushing into the void would look "fresh".)
 - Stale route → broadcast fallback: past 3 min without inbound, pushes,
   rekeys and revokes go out with empty `toClientId` (server fans out to all
   same-`user_id` sessions). Reception refreshes `peerWs` via `fromClientId`
-  and the ack heals the way back — one round trip restores the leg.
+  and the ack heals the way back, one round trip restores the leg.
 - Epoch healing on receive, only for envelopes addressed to us (`outer.to`
   must equal our device id; third-party broadcast fallbacks are ignored):
   missed rekey → bounded local fast-forward (≤ 10 epochs; the subsequent
@@ -158,7 +158,7 @@ Version vectors `{ deviceId: counter }` select deltas; merge = union + LWW
 (tie-break: lexicographically greater `by` wins). Ratchets merge by `max`.
 Trusted sender keys merge by union; a divergent JWK keeps the local one and
 raises an error (no silent overwrite). **Room-key conflict policy: refuse +
-manual choice** — the local key is kept, the conflict is surfaced in
+manual choice**, the local key is kept, the conflict is surfaced in
 Settings → Sync, the user picks Keep local / Request remote re-push.
 
 Large snapshots are split into valid sub-snapshots (rooms/params chunk +
@@ -186,7 +186,7 @@ The 90 s timer remains as a safety net.
   safe via the ML-KEM component; identity = ECDSA P-256 + SLH-DSA-SHA2-128f
   (FIPS 205), both required; session data = AES-256-GCM (≈128-bit PQ margin).
 - **Transcript integrity:** the KDF transcript is hashed over canonical JSON
-  (sorted keys), never `JSON.stringify` — the server re-serializes in sorted
+  (sorted keys), never `JSON.stringify`, the server re-serializes in sorted
   order, so a naive hash would diverge per side.
 - **Anti-replay:** per-peer `(syncId, epoch)` window with monotonic high-water
   (tolerance 5000 for reordering) plus a bounded dedup set (6000 entries,

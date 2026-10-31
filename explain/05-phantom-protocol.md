@@ -238,22 +238,24 @@ The decrypted content is:
 
 ## 5.8 Rendezvous state machine
 
-```text
-Shared-room path
-A1 Alice computes slotContextual(Bob) using the shared room key
-A2 Alice seals an intro and deposits it (cap gate)
-A3 Alice polls her own slots on a jittered schedule
-A4 Bob polls his rooms and global slots
-A5 Bob opens the intro and decides
-     ignore -> silence, envelope expires in 24 hours
-     accept -> create room, seal a welcome, deposit it in Alice's global slot
-A6 Alice receives the welcome and joins the room
-A7 both store the friend locally and sync the roster
-
-Username path
-B1 Alice fetches Bob's prekey bundle
-B2 Alice seals an intro and deposits it in slotGlobal(Bob)
-B3 Bob, if acceptUnknown is enabled, opens and decides, then proceeds as A4 onward
+```sequence
+participants: Alice, Server, Bob
+== Shared-room path ==
+Alice: compute `slotContextual(Bob)` from the shared room key
+Alice -> Server: seal an intro and deposit it (cap gate)
+Alice: poll her own slots on a jittered schedule
+Bob -> Server: poll his room and global slots
+Server -> Bob: the sealed intro
+Bob: open the intro and decide; ignoring it lets it expire in 24 hours
+Bob -> Server: accept: create a room, seal a welcome into Alice's global slot
+Server -> Alice: the welcome
+Alice: join the room
+Alice: store the friend locally and sync the roster
+Bob: store the friend locally and sync the roster
+== Username path ==
+Alice -> Server: fetch Bob's prekey bundle
+Alice -> Server: seal an intro and deposit it in `slotGlobal(Bob)`
+Server -> Bob: the intro, if `acceptUnknown` is on; then as in the shared-room path
 ```
 
 Reciprocity is required for completion. There is no friendship without a second

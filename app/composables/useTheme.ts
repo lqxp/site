@@ -1,56 +1,46 @@
-export type Theme = 'light' | 'dark'
+type Theme = 'light' | 'dark'
+const KEY = 'qx-theme'
 
-const STORAGE_KEY = 'qxchat-theme'
+function systemDark() {
+  return matchMedia('(prefers-color-scheme: dark)').matches
+}
 
 export function useTheme() {
-  const theme = ref<Theme>('light')
+  const theme = useState<Theme>('theme', () => 'light')
 
-  function apply(choice: Theme) {
-    theme.value = choice
-    document.documentElement.setAttribute('data-theme', choice)
-
-    // Update theme-color meta for browser chrome
-    const meta = document.querySelector('meta[name="theme-color"]')
-    if (meta) {
-      meta.setAttribute('content', choice === 'dark' ? '#0f1318' : '#07111f')
-    }
-
-    try {
-      localStorage.setItem(STORAGE_KEY, choice)
-    } catch { /* storage may be unavailable */ }
+  function read() {
+    const set = document.documentElement.dataset.theme
+    theme.value = set === 'dark' || set === 'light' ? set : systemDark() ? 'dark' : 'light'
   }
 
-  function toggle() {
-    apply(theme.value === 'light' ? 'dark' : 'light')
+  if (import.meta.client && !useState('theme-bound', () => false).value) {
+    useState('theme-bound').value = true
+    matchMedia('(prefers-color-scheme: dark)').addEventListener('change', read)
   }
 
-  // Init: stored preference → system preference → light fallback
-  onMounted(() => {
-    let initial: Theme = 'light'
+  function apply(next: Theme) {
+    document.documentElement.dataset.theme = next
+    theme.value = next
+    try { localStorage.setItem(KEY, next) }
+    catch {}
+  }
 
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY)
-      if (stored === 'dark' || stored === 'light') {
-        initial = stored
-      } else {
-        initial = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-      }
-    } catch {
-      initial = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  function toggle(from?: HTMLElement | null) {
+    const next: Theme = theme.value === 'dark' ? 'light' : 'dark'
+    const root = document.documentElement
+    if (!document.startViewTransition || reducedMotion()) {
+      apply(next)
+      return
     }
+    const box = from?.getBoundingClientRect()
+    if (box) {
+      root.style.setProperty('--vt-x', `${box.left + box.width / 2}px`)
+      root.style.setProperty('--vt-y', `${box.top + box.height / 2}px`)
+    }
+    root.classList.add('theme-swap')
+    const vt = document.startViewTransition(() => apply(next))
+    vt.finished.finally(() => root.classList.remove('theme-swap'))
+  }
 
-    apply(initial)
-
-    // Listen for system changes when no explicit choice has been made
-    const mql = window.matchMedia('(prefers-color-scheme: dark)')
-    mql.addEventListener('change', (e) => {
-      try {
-        if (!localStorage.getItem(STORAGE_KEY)) {
-          apply(e.matches ? 'dark' : 'light')
-        }
-      } catch { /* ignore */ }
-    })
-  })
-
-  return { theme, toggle, apply }
+  return { theme, read, toggle }
 }

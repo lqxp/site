@@ -1,11 +1,11 @@
 {
   "name": "QxChat",
   "short_name": "QxChat",
-  "description": "Private, self-hosted, end-to-end encrypted messaging. Your server. Your rules.",
+  "description": "End-to-end encrypted chat in real time. No phone number, no email, no IP logs.",
   "start_url": "https://getqxchat.com/",
   "scope": "https://getqxchat.com/",
   "display": "standalone",
-  "background_color": "#f6f8fb",
+  "background_color": "#f9f9ff",
   "theme_color": "#1c71d8",
   "icons": [
     {

@@ -1,0 +1,107 @@
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+  * { margin: 0; }
+
+  html {
+    font-family: var(--font-sans);
+    background: var(--surface);
+    color: var(--on-surface);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-size-adjust: 100%;
+    scroll-padding-top: var(--z-bar);
+    accent-color: var(--primary);
+    interpolate-size: allow-keywords;
+  }
+
+  body {
+    min-height: 100dvh;
+    font-size: 1rem;
+    line-height: 1.5;
+    font-weight: var(--w-normal);
+    overflow-x: clip;
+    background: var(--surface);
+    transition: background-color var(--dur-effects-slow) var(--ease-effects-slow),
+      color var(--dur-effects-slow) var(--ease-effects-slow);
+  }
+
+  img, svg, video { display: block; max-width: 100%; }
+  img, video { height: auto; }
+
+  a { color: inherit; text-decoration: none; }
+  p a, .prose a, .text-link {
+    color: var(--primary);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    transition: text-decoration-thickness var(--dur-effects) var(--ease-effects);
+  }
+  p a:hover, .prose a:hover, .text-link:hover { text-decoration-thickness: 2px; }
+
+  button, input, select, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; background: none; border: 0; padding: 0; }
+
+  h1, h2, h3, h4 { font-weight: var(--w-book); text-wrap: balance; letter-spacing: -0.02em; }
+  strong, b { font-weight: var(--w-semibold); }
+  p, li { text-wrap: pretty; }
+
+  code, kbd, pre { font-family: var(--font-mono); font-size: 0.9em; }
+
+  :focus-visible {
+    outline: var(--z-focus) solid var(--primary);
+    outline-offset: var(--s-1);
+  }
+
+  ::selection { background: var(--primary-container); color: var(--on-primary-container); }
+
+  .icon {
+    font-family: "Material Symbols Rounded";
+    font-weight: normal;
+    font-style: normal;
+    font-size: var(--z-icon);
+    width: 1em;
+    height: 1em;
+    line-height: 1;
+    display: inline-block;
+    flex: none;
+    overflow: hidden;
+    white-space: nowrap;
+    user-select: none;
+    font-feature-settings: "liga";
+    font-variation-settings: "FILL" var(--fill, 0), "wght" var(--icon-wght, 400), "GRAD" 0, "opsz" 24;
+    transition: font-variation-settings var(--dur-effects) var(--ease-effects);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .skip {
+    position: fixed;
+    top: var(--s-2);
+    left: var(--s-2);
+    z-index: 100;
+    padding: var(--s-3) var(--s-5);
+    border-radius: var(--r-full);
+    background: var(--primary);
+    color: var(--on-primary);
+    translate: 0 -200%;
+    transition: translate var(--dur-spatial-fast) var(--ease-spatial-fast);
+  }
+  .skip:focus-visible { translate: 0 0; }
+
+  @media print {
+    .nav, .tabbar, .foot, .skip, .pages-btn, .drawer, .toc { display: none; }
+    body::after {
+      content: "Printed from getqxchat.com. Paper keeps things longer than our server does.";
+      display: block;
+      margin-top: var(--s-8);
+      font: italic 0.75rem var(--font-sans);
+    }
+  }
+}

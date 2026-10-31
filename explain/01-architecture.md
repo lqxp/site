@@ -14,16 +14,10 @@ The server is a single Rust binary (`qxprotocol`) exposing an HTTP API and a
 WebSocket endpoint. The reference client is a Vue application that runs in the
 browser.
 
-```text
-+---------------------------+       HTTP (axum)        +---------------------------+
-|  Web client (Vue / TS)    | -----------------------> |  Rust server (qxprotocol) |
-|                           |                          |                           |
-|  - WebSocket socket       | <----------------------> |  - /ws upgrade handler     |
-|  - crypto (WebCrypto,     |       WebSocket          |  - account DB (sqlx)       |
-|    noble, ml-kem, ml-dsa) |                          |  - room DB (sqlx)          |
-|  - localStorage           |                          |  - RAM message store       |
-|                           |                          |  - RAM phantom dead-drop   |
-+---------------------------+                          +---------------------------+
+```boxes
+Web client (Vue / TS) | WebSocket connection; Crypto: WebCrypto, noble, ml-kem, ml-dsa; localStorage
+<-> HTTP (axum) and WebSocket
+Rust server (qxprotocol) | `/ws` upgrade handler; Account database (sqlx); Room database (sqlx); RAM message store; RAM PHANTOM dead-drop
 ```
 
 ## 1.2 Server modules
