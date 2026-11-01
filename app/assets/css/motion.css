@@ -7,6 +7,7 @@
   /* Above-the-fold copy never starts invisible: it is painted on the first frame (counts for LCP) and only settles into place. */
   .enter-rise { animation: settle var(--dur-reveal) var(--ease-spatial) backwards; animation-delay: calc(var(--stagger) * (1 - pow(0.8, var(--i, 0))) * 5); }
   .enter-pop { animation: pop var(--dur-spatial-slow) var(--ease-spatial-fast) backwards; animation-delay: calc(var(--stagger) * (1 - pow(0.8, var(--i, 0))) * 5); }
+  .js:not(.ready) :is(.enter-rise, .enter-pop) { animation-play-state: paused; }
   @keyframes rise { from { opacity: 0; translate: 0 var(--s-6); } }
   @keyframes settle { from { opacity: 0.35; translate: 0 var(--s-4); } }
   @keyframes pop { from { opacity: 0; scale: 0.5; } }

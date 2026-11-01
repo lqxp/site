@@ -3,13 +3,12 @@ import { handbook } from './app/utils/handbook'
 
 const description = 'QxChat is an end-to-end encrypted messenger that works in real time. No phone number, no email, no IP logs. Use the public server at qxch.at or run your own.'
 
-const boot = `(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('qx-theme');if(t==='dark'||t==='light')d.dataset.theme=t}catch(e){}})()`
+const boot = `(function(){var d=document.documentElement;d.classList.add('js');var r=function(){d.classList.add('ready')};setTimeout(r,1000);try{document.fonts.ready.then(r)}catch(e){r()}try{var t=localStorage.getItem('qx-theme');if(t==='dark'||t==='light')d.dataset.theme=t}catch(e){}})()`
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: false },
   features: { inlineStyles: true },
-  vite: { build: { cssCodeSplit: false } },
   hooks: {
     // Lighthouse: nothing competes with the hero image and fonts on first load.
     // No modulepreload for split chunks (the entry imports them one hop later) and
@@ -55,6 +54,7 @@ export default defineNuxtConfig({
     credits: false,
   },
   ogImage: { enabled: false },
+  seo: { minify: false },
 
   experimental: {
     viewTransition: true,

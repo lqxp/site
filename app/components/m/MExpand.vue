@@ -9,6 +9,12 @@ function token(name: string) {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim()
 }
 
+function ms(name: string) {
+  const v = token(name)
+  const n = Number.parseFloat(v)
+  return v.endsWith('ms') ? n : v.endsWith('s') ? n * 1000 : n
+}
+
 function animate(open: boolean) {
   const el = item.value!
   const b = body.value!
@@ -28,7 +34,7 @@ function animate(open: boolean) {
     { height: `${h}px`, opacity: 1, transform: 'none' },
   ]
   running = b.animate(open ? frames : frames.reverse(), {
-    duration: Number.parseFloat(token(open ? '--dur-spatial' : '--dur-effects-slow')) || 300,
+    duration: ms(open ? '--dur-spatial' : '--dur-effects-slow') || 300,
     easing: token(open ? '--ease-spatial' : '--ease-out') || 'ease-out',
   })
   running.onfinish = () => {
